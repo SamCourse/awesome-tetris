@@ -13,9 +13,16 @@ namespace TetrisClient
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
-    {
     public partial class MainWindow : Window {
+        private static Dictionary<int, SolidColorBrush> colorMap = new() {
+            { 1, Brushes.Aqua },
+            { 2, Brushes.Blue },
+            { 3, Brushes.Orange },
+            { 4, Brushes.Yellow },
+            { 5, Brushes.Lime },
+            { 6, Brushes.Purple },
+            { 7, Brushes.Red }
+        };
 
         private TetrisGame _game;
 
@@ -42,6 +49,7 @@ namespace TetrisClient
                 Height = 25, // Height of a cell in the grid
                 Stroke = Brushes.Transparent, // The border
                 StrokeThickness = 1, // Thickness of the border
+                Fill = colorMap[type], // Background color
             };
 
             TetrisGrid.Children.Add(rectangle); // Add the rectangle to the grid

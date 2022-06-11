@@ -58,11 +58,35 @@ namespace TetrisClient
                     Grid.SetColumn(rectangle, j + offsetX); // Zet de kolom
                 }
         private void KeyPressed(object sender, KeyEventArgs keyPress) {
+            switch (keyPress.Key) {
+                default:
+                    return;
+                
+                case Key.A:
+                case Key.Left:
+                    _game.MoveLeft();
+                    break;
+                
+                case Key.S:
+                case Key.Down:
+                    _game.MoveDown();
+                    break;
+                    
+                case Key.D:
+                case Key.Right:
+                    _game.MoveRight();
+                    break;
+                
+                case Key.W:
+                case Key.Up:
+                    _game.Rotate();
+                    break;
             }
             keyPress.Handled = true;
             
             
         }
+        
         private void RegisterKeyEventListener() {
             KeyDown += KeyPressed;
         }

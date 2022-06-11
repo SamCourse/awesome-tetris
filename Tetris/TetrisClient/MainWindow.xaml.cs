@@ -22,41 +22,34 @@ namespace TetrisClient
         public MainWindow()
         {
             InitializeComponent();
-
-            Matrix matrix = new Matrix(new int[,]
-                {
-                    { 0, 0, 1 },
-                    { 1, 1, 1 },
-                    { 0, 0, 0 },
-                }
-            );
-            matrix = matrix.Rotate90();
+        }
+        
+        public void UpdateBoard() {
+            int[,] board = _game.CurrentBoard();
             
-            int offsetY = 0;
-            int offsetX = 0;
+            
 
-            int[,] values = matrix.Value;
-            for (int i = 0; i < values.GetLength(0); i++)
+        /// <summary>
+        /// Draw a point at the given coordinates
+        /// </summary>
+        /// <param name="x">The x coordinate of the point</param>
+        /// <param name="y">The y coordinate of the point</param>
+        /// <param name="type">The type of tetromino</param>
+        private void DrawPoint(int x, int y, int type) {
+            Rectangle rectangle = new Rectangle
             {
-                for (int j = 0; j < values.GetLength(1); j++)
-                {
-                    // Als de waarde niet gelijk is aan 1,
-                    // dan hoeft die niet getekent te worden:
-                    if (values[i, j] != 1) continue;
+                Width = 25, // Width of a cell in the grid
+                Height = 25, // Height of a cell in the grid
+                Stroke = Brushes.Transparent, // The border
+                StrokeThickness = 1, // Thickness of the border
+            };
 
-                    Rectangle rectangle = new Rectangle()
-                    {
-                        Width = 25, // Breedte van een 'cell' in de Grid
-                        Height = 25, // Hoogte van een 'cell' in de Grid
-                        Stroke = Brushes.White, // De rand
-                        StrokeThickness = 1, // Dikte van de rand
-                        Fill = Brushes.Red, // Achtergrondkleur
-                    };
+            TetrisGrid.Children.Add(rectangle); // Add the rectangle to the grid
+            Grid.SetRow(rectangle, y); // Place the row
+            Grid.SetColumn(rectangle, x); // Place the column
+        }
 
-                    TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
-                    Grid.SetRow(rectangle, i + offsetY); // Zet de rij
-                    Grid.SetColumn(rectangle, j + offsetX); // Zet de kolom
-                }
+
         private void KeyPressed(object sender, KeyEventArgs keyPress) {
             switch (keyPress.Key) {
                 default:

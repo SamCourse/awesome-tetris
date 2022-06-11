@@ -43,6 +43,10 @@ namespace TetrisEngine {
         /// <param name="heading">The direction of where the matrix should move.</param>
         /// <returns> True if the move was successful, false if unsuccessful </returns>
         private bool MakeMove(Heading heading) {
+            // If the cell at the given position isn't set, there is no matrix there. Meaning the given position is not correct.
+            if (!_board.CellIsSet(_currentShape.xPos, _currentShape.yPos)) {
+                throw new InvalidMatrixPositionException(_currentShape.xPos, _currentShape.yPos);
+            }
 
             int[,] matrixValue = _currentShape.matrix.Value;
 
@@ -131,4 +135,12 @@ namespace TetrisEngine {
         }
     }
 
+    /// <summary>
+    /// Exception thrown when a Y and X coordinate is passed which does not contain a matrix.
+    /// </summary>
+    internal class InvalidMatrixPositionException : Exception {
+        public InvalidMatrixPositionException(int posX, int posY) : 
+            base($"No matrix found at coordinates [{posX}, {posY}].") {
+        }
+    }
 }

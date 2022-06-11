@@ -112,6 +112,43 @@ namespace TetrisEngine {
 
             return true;
         }
+
+        /// <summary>
+        /// Tries to move the shape. If unsuccesful, spawns the next one in the queue.
+        /// </summary>
+        /// <param name="heading">The direction the move is in.</param>
+        private void Move(Heading heading) {
+            bool moveSuccesful = MakeMove(heading);
+            
+            if (!moveSuccesful)
+                SpawnNextTetromino();
+        }
+
+        /// <summary>
+        /// Moves the current tetromino to the left
+        /// </summary>
+        public void MoveLeft() {
+            Move(Heading.LEFT);
+        }
+        
+        /// <summary>
+        /// Moves the current tetromino to the right
+        /// </summary>
+        public void MoveRight() {
+            Move(Heading.RIGHT);
+        }
+        
+        /// <summary>
+        /// Moves the current tetromino down
+        /// </summary>
+        public void MoveDown() {
+            Move(Heading.DOWN);
+        }
+
+        public void Rotate() {
+            
+        }
+
         /// <summary>
         /// Moves the next tetromino from the queue to the board and adds a new random tetromino to the queue.
         /// </summary>

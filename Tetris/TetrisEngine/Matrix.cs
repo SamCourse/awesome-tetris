@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 
-namespace TetrisClient
-{
+namespace TetrisEngine {
     /// <summary>
     /// Represents a matrix.
     /// </summary>
-    public readonly struct Matrix
-    {
+    public readonly struct Matrix {
         /// <summary>
         /// Readable name for the rotation method.
         /// </summary>
@@ -27,10 +25,8 @@ namespace TetrisClient
         /// </summary>
         /// <param name="value">The value of the matrix, dimensions must be equal.</param>
         /// <exception cref="ArgumentException"></exception>
-        public Matrix(int[,] value)
-        {
-            if (value.GetLength(0) != value.GetLength(1))
-            {
+        public Matrix(int[,] value) {
+            if (value.GetLength(0) != value.GetLength(1)) {
                 // This can be removed when implementing the line-removal function,
                 // since the multidimensional array will be changed into (possibly) an odd-shaped matrix.
                 throw new ArgumentException("This matrix does not support odd-shaped matrices, only even shaped.");
@@ -87,14 +83,11 @@ namespace TetrisClient
         /// <param name="rotationMethod">How the matrix should be rotated</param>
         /// <returns>A new Matrix.</returns>
         [Pure]
-        private Matrix Rotate(RotationMethod rotationMethod)
-        {
+        private Matrix Rotate(RotationMethod rotationMethod) {
             var size = Value.GetLength(0);
             var rotatedValue = new int[size, size];
-            for (var i = 0; i < size; i++)
-            {
-                for (var j = 0; j < size; j++)
-                {
+            for (var i = 0; i < size; i++) {
+                for (var j = 0; j < size; j++) {
                     rotatedValue[i, j] = rotationMethod.Invoke(Value, size, i, j);
                 }
             }

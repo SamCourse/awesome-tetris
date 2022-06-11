@@ -58,7 +58,18 @@ namespace TetrisClient
                     Grid.SetRow(rectangle, i + offsetY); // Zet de rij
                     Grid.SetColumn(rectangle, j + offsetX); // Zet de kolom
                 }
+        private void KeyPressed(object sender, KeyEventArgs keyPress) {
             }
+            keyPress.Handled = true;
+            
+            
+        }
+        private void RegisterKeyEventListener() {
+            KeyDown += KeyPressed;
+        }
+
+        private void UnregisterKeyEventListener() {
+            KeyDown -= KeyPressed;
         }
     }
 }

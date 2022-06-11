@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 
 namespace TetrisEngine {
+    internal enum Heading {
+        LEFT,
+        DOWN,
+        RIGHT
+    }
     
     public class TetrisGame {
         private int _rows;
@@ -32,6 +37,77 @@ namespace TetrisEngine {
             return _board._board;
         }
 
+        /// <summary>
+        /// Tries to make the move with the given shape.
+        /// </summary>
+        /// <param name="heading">The direction of where the matrix should move.</param>
+        /// <returns> True if the move was successful, false if unsuccessful </returns>
+        private bool MakeMove(Heading heading) {
+
+            int[,] matrixValue = _currentShape.matrix.Value;
+
+            // Define two queues of actions that may or may not be executed.
+            // All the delete actions need to be performed first, then the update actions afterwards.
+            // This is to prevent newly placed coordinates being overwritten by delete actions of older coordinates that are performed later.
+            List<Action> deleteActionQueue = new List<Action>();
+            List<Action> updateActionQueue = new List<Action>();
+
+            for (int y = 0; y < matrixValue.GetLength(0); y++) {
+                for (int x = 0; x < matrixValue.GetLength(1); x++) {
+                    // Get the type of the current position (and the entire tetromino if this is not 0)
+                    int tetrominoType = matrixValue[x, y];
+                    
+                    // If at the current coordinates, there is a 0, skip this iteration.
+                    if (tetrominoType == 0) {
+                        continue;
+                    }
+                    
+                    // Get the current coordinates of the single point in the matrix
+                    int coordCurrX = _currentShape.xPos + x;
+                    int coordCurrY = _currentShape.yPos + y;
+
+                    int coordNewX = coordCurrX;
+                    int coordNewY = coordCurrY;
+
+                    // Update the coordinates based on the desired direction
+                    switch (heading) {
+                        case Heading.LEFT:
+                            coordNewX--;
+                            break;
+                        case Heading.DOWN:
+                            coordNewY++;
+                            break;
+                        case Heading.RIGHT:
+                            coordNewX++;
+                            break;
+                    }
+
+                    // If the cell at one of the new positions is already set, this action is not possible
+                    if (_board.CellIsSet(coordNewX, coordNewY)) {
+                        return false;
+                    }
+
+                    // Add the two actions to their respective queues, to be performed if none of the given cells are set.
+                    deleteActionQueue.Add(() => _board.EmptyCell(coordCurrX, coordCurrY));
+                    
+                    updateActionQueue.Add(() => {
+                        _currentShape.xPos = coordNewX;
+                        _currentShape.yPos = coordNewY;
+                        _board.SetCell(coordNewX, coordNewY, tetrominoType);
+                    });
+                }
+            }
+            
+            foreach (Action deleteCell in deleteActionQueue) {
+                deleteCell();
+            }
+
+            foreach (Action updateCellAndShape in updateActionQueue) {
+                updateCellAndShape();
+            }
+
+            return true;
+        }
         /// <summary>
         /// Moves the next tetromino from the queue to the board and adds a new random tetromino to the queue.
         /// </summary>

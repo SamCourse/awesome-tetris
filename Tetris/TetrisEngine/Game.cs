@@ -8,11 +8,13 @@ namespace TetrisEngine {
         private int _columns;
         private List<Matrix> _queue { get; }
         private Shape _currentShape;
+        private Board _board;
         
         public TetrisGame(int rows, int columns) {
             _rows = rows;
             _columns = columns;
             _queue = new List<Matrix>();
+            _board = new Board(rows, columns);
         }
 
         /// <summary>
@@ -23,6 +25,11 @@ namespace TetrisEngine {
             for (int i = 0; i < 3; i++) {
                 QueueNewShape();
             }
+        }
+        
+        /// <returns> The current board as int[,] object. Can be used to update the view. </returns>
+        public int[,] CurrentBoard() {
+            return _board._board;
         }
 
         /// <summary>

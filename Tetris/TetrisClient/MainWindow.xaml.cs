@@ -57,6 +57,29 @@ namespace TetrisClient
             Grid.SetColumn(rectangle, x); // Place the column
         }
 
+        private void StartButton_Click(object sender, RoutedEventArgs e) {
+            // Hide the start game modal
+            StartModal.Visibility = Visibility.Hidden;
+            
+            // Create new Game object with the amount of rows and columns that is being played with
+            int columns = TetrisGrid.ColumnDefinitions.Count;
+            int rows = TetrisGrid.RowDefinitions.Count;
+            _game = new TetrisGame(rows, columns);
+            
+            // Start game loop
+            _game.InitializeGame();
+        }
+        
+        
+        private void HowToButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open a wikihow page on how to play Tetris.
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://www.wikihow.com/Play-Tetris",
+                UseShellExecute = true
+            });
+        }
 
         private void KeyPressed(object sender, KeyEventArgs keyPress) {
             switch (keyPress.Key) {

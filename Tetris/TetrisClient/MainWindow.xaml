@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="412" Width="658">
+        Title="MainWindow" Height="452" Width="658">
     <Canvas x:Name="WindowContainer" HorizontalAlignment="Center" Width="250">
         <Canvas Panel.ZIndex="1" x:Name="StartModal" Width="126" Height="98" Canvas.Left="62" Canvas.Top="149">
             <Rectangle Fill="White"

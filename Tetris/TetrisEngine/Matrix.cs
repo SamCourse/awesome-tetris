@@ -86,11 +86,10 @@ namespace TetrisEngine {
         private Matrix Rotate(RotationMethod rotationMethod) {
             var size = Value.GetLength(0);
             var rotatedValue = new int[size, size];
-            for (var i = 0; i < size; i++) {
-                for (var j = 0; j < size; j++) {
+            
+            for (var i = 0; i < size; i++)
+                for (var j = 0; j < size; j++)
                     rotatedValue[i, j] = rotationMethod.Invoke(Value, size, i, j);
-                }
-            }
 
             return new Matrix(rotatedValue);
         }

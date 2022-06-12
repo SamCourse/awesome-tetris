@@ -6,10 +6,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TetrisEngine;
-using Shape = TetrisEngine.Shape;
 
-namespace TetrisClient
-{
+namespace TetrisClient {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

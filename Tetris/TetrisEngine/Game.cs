@@ -5,7 +5,8 @@ namespace TetrisEngine {
     internal enum Heading {
         LEFT,
         DOWN,
-        RIGHT
+        RIGHT,
+        NONE
     }
     
     public class TetrisGame {

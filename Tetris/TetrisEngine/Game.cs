@@ -63,8 +63,8 @@ namespace TetrisEngine {
                     }
                     
                     // Get the current coordinates of the single point in the matrix
-                    int coordCurrX = _currentShape.xPos + x;
-                    int coordCurrY = _currentShape.yPos + y;
+                    int coordCurrX = _currentTetromino.xPos + x;
+                    int coordCurrY = _currentTetromino.yPos - (matrixHeight - 1) + y;
 
                     int coordNewX = coordCurrX;
                     int coordNewY = coordCurrY;

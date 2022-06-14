@@ -29,10 +29,6 @@
         /// 0 can be passed to clear the cell.
         /// </param>
         internal void SetCell(int x, int y, int type) {
-            if (y >= _board.GetLength(0) || x >= _board.GetLength(1)) {
-                return;
-            }
-            
             _board[y, x] = type;
         }
 

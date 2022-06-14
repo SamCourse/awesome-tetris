@@ -90,7 +90,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <returns> A random shape in the form of a Matrix </returns>
         public static Matrix RandomShape() {
-            return shapes[new Random().Next(shapes.Count)];
+            return shapes[new Random().Next(shapes.Count - 1)];
         }
     }
 }

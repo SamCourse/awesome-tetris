@@ -12,8 +12,8 @@
                        RadiusY="8"
                        Width="{Binding ActualWidth, ElementName=StartModal}" 
                        Height="{Binding ActualHeight, ElementName=StartModal}"/>
-            <Button Height="22" Width="84" Canvas.Left="21" Canvas.Top="27" Content="Start game" Click="StartButton_Click"/>
-            <Button Height="22" Width="84" Canvas.Left="21" Canvas.Top="56" Content="How to play" Click="HowToButton_Click"/>
+            <Button Height="22" Width="84" Canvas.Left="21" Canvas.Top="27" Content="Start game" Click="StartButton_Click" FontFamily="Bahnschrift"/>
+            <Button Height="22" Width="84" Canvas.Left="21" Canvas.Top="56" Content="How to play" Click="HowToButton_Click" FontFamily="Bahnschrift"/>
         </Canvas>
         <Grid x:Name="TetrisGrid" Background="#FFC1C1C1" Canvas.Top="41">
             <Grid.RowDefinitions>
@@ -63,7 +63,31 @@
             <Border Grid.Row="12" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
             <Border Grid.Row="14" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
             <Border Grid.Row="15" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,0,0,1" Background="{x:Null}" />
-
+            
         </Grid>
+
+        <Border Canvas.Left="328" Canvas.Top="41" CornerRadius="6" Background="LightGray">
+            <Canvas x:Name="QueueContainer" Width="150" Height="250">
+                <Label Content="Up next" Canvas.Left="36" FontSize="20" FontFamily="Bahnschrift" Canvas.Top="3" Height="34"/>
+                <Grid x:Name="QueueGrid" Height="200" Width="100" Canvas.Top="42" Canvas.Left="25">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="25"/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </Canvas>
+        </Border>
     </Canvas>
 </Window>

@@ -27,7 +27,6 @@ namespace TetrisClient {
             Timer.Start();
         }
         
-        public void UpdateBoard() {
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
             UpdateBoard();
@@ -52,14 +51,13 @@ namespace TetrisClient {
         /// <param name="x">The x coordinate of the point</param>
         /// <param name="y">The y coordinate of the point</param>
         /// <param name="type">The type of tetromino</param>
-        private void DrawPoint(int x, int y, int type) {
-            Rectangle rectangle = new Rectangle
-            {
+        private void DrawCell(int x, int y, int type) {
+            Rectangle rectangle = new Rectangle {
                 Width = 25, // Width of a cell in the grid
                 Height = 25, // Height of a cell in the grid
                 Stroke = Brushes.Transparent, // The border
                 StrokeThickness = 1, // Thickness of the border
-                Fill = colorMap[type], // Background color
+                Fill = Constants.ColorMap[type] // Background color
             };
 
             TetrisGrid.Children.Add(rectangle); // Add the rectangle to the grid
@@ -78,6 +76,8 @@ namespace TetrisClient {
 
             // Start game loop
             _game.InitializeGame();
+            
+            StartUpdateBoardTask();
         }
         
         

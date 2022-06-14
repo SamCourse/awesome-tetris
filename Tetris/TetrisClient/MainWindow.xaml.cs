@@ -29,9 +29,8 @@ namespace TetrisClient {
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 10); // Update every 10 ms.
             Timer.Start();
         }
-        
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
-        {
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e) {
             UpdateBoard();
             UpdateGrid();
         }
@@ -104,6 +103,7 @@ namespace TetrisClient {
             Grid.SetColumn(rectangle, x); // Place the column
         }
 
+
         /// <summary>
         /// Used to clear the given grid of all the rectangle objects.
         /// </summary>
@@ -114,7 +114,7 @@ namespace TetrisClient {
                 grid.Children.OfType<UIElement>()
                     .Where(el => el is Rectangle)
                     .ToList();
-            
+
             foreach (UIElement rectangle in rectangles) {
                 grid.Children.Remove(rectangle);
             }
@@ -127,7 +127,7 @@ namespace TetrisClient {
         private void StartButton_Click(object sender, RoutedEventArgs e) {
             // Hide the start game modal
             StartModal.Visibility = Visibility.Hidden;
-            
+
             RegisterKeyEventListener();
 
             // Create new Game object with the amount of rows and columns that is being played with
@@ -135,7 +135,7 @@ namespace TetrisClient {
 
             // Start game loop
             _game.InitializeGame();
-            
+
             StartUpdateBoardTask();
         }
 

@@ -54,7 +54,6 @@ namespace TetrisEngine {
         /// </summary>
         private static readonly List<Matrix> shapes = new() {
             // I  ▀▀▀▀ 
-            // Define the matrix coordinates
             new Matrix(new int[,] {
                 { 1, 1, 1, 1 },
                 { 0, 0, 0, 0 },

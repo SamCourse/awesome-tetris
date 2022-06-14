@@ -157,7 +157,49 @@ namespace TetrisEngine {
         }
 
         public void Rotate() {
-            
+            Tetromino tetrominoPreRotate = _currentTetromino;
+            Matrix rotatedMatrix = _currentTetromino.matrix.Rotate90();
+
+            Tetromino postRotate = new Tetromino(rotatedMatrix, _currentTetromino.xPos, _currentTetromino.yPos);
+
+            // Like the Move() method, the actions in these queues are only executed after all the checks pass.
+            List<Action> deleteActionQueue = new List<Action>();
+            List<Action> updateActionQueue = new List<Action>();
+
+            for (int y = 0; y < rotatedMatrix.Value.GetLength(0); y++) {
+                for (int x = 0; x < rotatedMatrix.Value.GetLength(1); x++) {
+                    // Get the tetromino type of the current position
+                    int tetrominoType = rotatedMatrix.Value[y, x];
+
+                    // Get the coordinates of the current single point in the matrix
+                    int rotatedCoordX = postRotate.xPos + x;
+                    int rotatedCoordY = postRotate.yPos - (rotatedMatrix.Value.GetLength(0) - 1) + y;
+
+                    if (rotatedCoordX > _columns - 1 || rotatedCoordX < 0) { // If out of bounds on the side, do nothing
+                        return;
+                    }
+
+                    // If the cell at one of the new positions is already set and
+                    // it is not the cells of the pre-rotation matrix, this action is not possible
+                    if (rotatedCoordY > _rows - 1 || // If at bottom, rotation not possible
+                        _board.CellIsSet(rotatedCoordX, rotatedCoordY) &&
+                        !tetrominoPreRotate.IsOnCoordinates(rotatedCoordX, rotatedCoordY)) {
+                        return;
+                    }
+
+                    // Add the two actions to their respective queues, to be performed if none of the given cells are set.
+                    deleteActionQueue.Add(() => _board.EmptyCell(rotatedCoordX, rotatedCoordY));
+                    updateActionQueue.Add(() => _board.SetCell(rotatedCoordX, rotatedCoordY, tetrominoType));
+                }
+            }
+
+            _currentTetromino = postRotate;
+
+            foreach (Action deleteCell in deleteActionQueue)
+                deleteCell();
+
+            foreach (Action updateCellAndTetromino in updateActionQueue)
+                updateCellAndTetromino();
         }
 
         /// <summary>

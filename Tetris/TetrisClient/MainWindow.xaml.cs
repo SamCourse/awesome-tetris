@@ -32,9 +32,19 @@ namespace TetrisClient {
         {
             UpdateBoard();
         }
+
+        private void UpdateBoard() {
+            ClearBoard();
+
             int[,] board = _game.CurrentBoard();
-            
-            
+
+            for (int y = 0; y < board.GetLength(0); y++) {
+                for (int x = 0; x < board.GetLength(1); x++) {
+                    int type = board[y, x];
+                    DrawCell(x, y, type);
+                }
+            }
+        }
 
         /// <summary>
         /// Draw a point at the given coordinates
@@ -108,8 +118,8 @@ namespace TetrisClient {
             }
 
             keyPress.Handled = true;
-            
 
+            UpdateBoard();
         }
 
         private void RegisterKeyEventListener() {

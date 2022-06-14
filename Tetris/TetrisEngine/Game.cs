@@ -13,7 +13,7 @@ namespace TetrisEngine {
     public class TetrisGame {
         private int _rows;
         private int _columns;
-        private List<Matrix> _queue { get; }
+        public readonly List<Matrix> _queue;
         private Tetromino _currentTetromino;
         private Board _board;
         

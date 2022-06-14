@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using TetrisEngine;
+using Matrix = TetrisEngine.Matrix;
 
 namespace TetrisClient {
     /// <summary>
@@ -28,14 +29,14 @@ namespace TetrisClient {
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 10); // Update every 10 ms.
             Timer.Start();
         }
-        
-        private void dispatcherTimer_Tick(object sender, EventArgs e)
-        {
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e) {
             UpdateBoard();
+            UpdateGrid();
         }
 
         private void UpdateBoard() {
-            ClearBoard();
+            ClearGrid(TetrisGrid);
 
             int[,] board = _game.CurrentBoard();
 
@@ -45,6 +46,41 @@ namespace TetrisClient {
                     DrawCell(x, y, type);
                 }
             }
+        }
+
+        private void UpdateGrid() {
+            ClearGrid(QueueGrid);
+
+            List<Matrix> queue = _game._queue;
+
+            for (int i = 0; i < queue.Count; i++) {
+                int shapeYStartPosition = i * 3; // Every shape will be positioned
+                                                 // 3 Y coordinates lower than the previous.
+                                                 
+                int[,] matrix = queue[i].Value;
+
+                for (int y = 0; y < matrix.GetLength(0); y++) {
+                    for (int x = 0; x < matrix.GetLength(1); x++) {
+                        int type = matrix[y, x];
+
+                        DrawQueueCell(x, y + shapeYStartPosition, type);
+                    }
+                }
+            }
+        }
+
+        private void DrawQueueCell(int x, int y, int type) {
+            Rectangle rectangle = new Rectangle {
+                Width = 25, // Width of a cell in the grid
+                Height = 25, // Height of a cell in the grid
+                Stroke = Brushes.Transparent, // The border
+                StrokeThickness = 1, // Thickness of the border
+                Fill = Constants.ColorMap[type] // Background color
+            };
+
+            QueueGrid.Children.Add(rectangle); // Add the rectangle to the grid
+            Grid.SetRow(rectangle, y); // Place the row
+            Grid.SetColumn(rectangle, x); // Place the column
         }
 
         /// <summary>
@@ -67,18 +103,20 @@ namespace TetrisClient {
             Grid.SetColumn(rectangle, x); // Place the column
         }
 
+
         /// <summary>
-        /// Used to clear the TetrisGrid of all the Tetrominos.
+        /// Used to clear the given grid of all the rectangle objects.
         /// </summary>
-        private void ClearBoard() {
+        /// <param name="grid">The grid that needs to be cleared</param>
+        private static void ClearGrid(Grid grid) {
             // Get all children of grid that are of type Rectangle using a LINQ Where
-            List<UIElement> rectangles = 
-                TetrisGrid.Children.OfType<UIElement>()
+            List<UIElement> rectangles =
+                grid.Children.OfType<UIElement>()
                     .Where(el => el is Rectangle)
                     .ToList();
-            
+
             foreach (UIElement rectangle in rectangles) {
-                TetrisGrid.Children.Remove(rectangle);
+                grid.Children.Remove(rectangle);
             }
         }
 
@@ -89,7 +127,7 @@ namespace TetrisClient {
         private void StartButton_Click(object sender, RoutedEventArgs e) {
             // Hide the start game modal
             StartModal.Visibility = Visibility.Hidden;
-            
+
             RegisterKeyEventListener();
 
             // Create new Game object with the amount of rows and columns that is being played with
@@ -97,7 +135,7 @@ namespace TetrisClient {
 
             // Start game loop
             _game.InitializeGame();
-            
+
             StartUpdateBoardTask();
         }
 

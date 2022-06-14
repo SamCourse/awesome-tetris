@@ -55,8 +55,8 @@ namespace TetrisClient {
         /// <param name="type">The type of tetromino, see <see cref="Constants.ColorMap"/> and <see cref="Shapes.shapes"/>.</param>
         private void DrawCell(int x, int y, int type) {
             Rectangle rectangle = new Rectangle {
-                Width = 25, // Width of a cell in the grid
-                Height = 25, // Height of a cell in the grid
+                Width = 30, // Width of a cell in the grid
+                Height = 30, // Height of a cell in the grid
                 Stroke = Brushes.Transparent, // The border
                 StrokeThickness = 1, // Thickness of the border
                 Fill = Constants.ColorMap[type] // Background color

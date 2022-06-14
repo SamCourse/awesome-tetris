@@ -6,8 +6,7 @@ namespace TetrisEngine {
         public Matrix matrix { get; }
         public int xPos { get; set; }
         public int yPos { get; set; }
-
-
+        
         /// <param name="matrix">The matrix of the tetromino.</param>
         /// <param name="yPos">The highest Y coordinate of the matrix' position.</param>
         /// <param name="xPos">The lowest X coordinate of the matrix' position.</param>

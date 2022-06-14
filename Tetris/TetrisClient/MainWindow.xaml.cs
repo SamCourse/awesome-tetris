@@ -65,6 +65,17 @@ namespace TetrisClient {
             Grid.SetColumn(rectangle, x); // Place the column
         }
 
+        private void ClearBoard() {
+            // Get all children of grid that are of type Rectangle using a LINQ Where
+            List<UIElement> rectangles = 
+                TetrisGrid.Children.OfType<UIElement>()
+                    .Where(el => el is Rectangle)
+                    .ToList();
+            
+            foreach (UIElement rectangle in rectangles) {
+                TetrisGrid.Children.Remove(rectangle);
+            }
+        }
         private void StartButton_Click(object sender, RoutedEventArgs e) {
             // Hide the start game modal
             StartModal.Visibility = Visibility.Hidden;

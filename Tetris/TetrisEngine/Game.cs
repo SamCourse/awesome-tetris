@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TetrisEngine {
     internal enum Heading {
@@ -114,6 +115,17 @@ namespace TetrisEngine {
                 }
             }
 
+
+            switch (heading) {
+                case Heading.DOWN:
+                    _currentTetromino.yPos++;
+                    break;
+                case Heading.LEFT:
+                    _currentTetromino.xPos--;
+                    break;
+                case Heading.RIGHT:
+                    _currentTetromino.xPos++;
+                    break;
             }
 
             foreach (Action deleteCell in deleteActionQueue)
@@ -130,9 +142,9 @@ namespace TetrisEngine {
         /// </summary>
         /// <param name="heading">The direction the move is in.</param>
         private void Move(Heading heading) {
-            bool moveSuccesful = MakeMove(heading);
-            
-            if (!moveSuccesful)
+            bool moveSuccesful = AttemptMove(heading);
+
+            if (!moveSuccesful) {
                 SpawnNextTetromino();
         }
 
@@ -220,6 +232,8 @@ namespace TetrisEngine {
                 _columns / 2 - 1,
                 matrix.Value.GetLength(0) - 1);
 
+            Move(Heading.NONE);
+        }
         }
 
         /// <summary>

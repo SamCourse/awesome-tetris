@@ -12,15 +12,6 @@ namespace TetrisClient {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private static Dictionary<int, SolidColorBrush> colorMap = new() {
-            { 1, Brushes.Aqua },
-            { 2, Brushes.Blue },
-            { 3, Brushes.Orange },
-            { 4, Brushes.Yellow },
-            { 5, Brushes.Lime },
-            { 6, Brushes.Purple },
-            { 7, Brushes.Red }
-        };
 
         private TetrisGame _game;
 
@@ -59,11 +50,11 @@ namespace TetrisClient {
             // Hide the start game modal
             StartModal.Visibility = Visibility.Hidden;
             
+            RegisterKeyEventListener();
+
             // Create new Game object with the amount of rows and columns that is being played with
-            int columns = TetrisGrid.ColumnDefinitions.Count;
-            int rows = TetrisGrid.RowDefinitions.Count;
-            _game = new TetrisGame(rows, columns);
-            
+            _game = new TetrisGame(Constants.ROWS, Constants.COLUMNS);
+
             // Start game loop
             _game.InitializeGame();
         }
@@ -83,32 +74,33 @@ namespace TetrisClient {
             switch (keyPress.Key) {
                 default:
                     return;
-                
+
                 case Key.A:
                 case Key.Left:
                     _game.MoveLeft();
                     break;
-                
+
                 case Key.S:
                 case Key.Down:
                     _game.MoveDown();
                     break;
-                    
+
                 case Key.D:
                 case Key.Right:
                     _game.MoveRight();
                     break;
-                
+
                 case Key.W:
                 case Key.Up:
                     _game.Rotate();
                     break;
             }
+
             keyPress.Handled = true;
             
-            
+
         }
-        
+
         private void RegisterKeyEventListener() {
             KeyDown += KeyPressed;
         }

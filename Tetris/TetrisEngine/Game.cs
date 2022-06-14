@@ -30,8 +30,16 @@ namespace TetrisEngine {
             for (int i = 0; i < 3; i++) {
                 QueueNewTetromino();
             }
+            FallTimer();
         }
-        
+
+        private async void FallTimer() {
+            while (true) {
+                await Task.Delay(1000);
+                MoveDown();
+            }
+        }
+
         /// <returns> The current board as int[,] object. Can be used to update the view. </returns>
         public int[,] CurrentBoard() {
             return _board._board;
@@ -126,14 +134,14 @@ namespace TetrisEngine {
         public void MoveLeft() {
             Move(Heading.LEFT);
         }
-        
+
         /// <summary>
         /// Moves the current tetromino to the right
         /// </summary>
         public void MoveRight() {
             Move(Heading.RIGHT);
         }
-        
+
         /// <summary>
         /// Moves the current tetromino down
         /// </summary>

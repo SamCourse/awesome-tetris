@@ -147,7 +147,10 @@ namespace TetrisEngine {
             bool moveSuccesful = AttemptMove(heading);
 
             if (!moveSuccesful) {
+                CheckForFullRows();
+                
                 SpawnNextTetromino();
+            }
         }
 
         /// <summary>
@@ -236,6 +239,19 @@ namespace TetrisEngine {
 
             Move(Heading.NONE);
         }
+
+        private void CheckForFullRows() {
+            IEnumerator<int> fullRows = _board.GetCompleteRows();
+
+            while (fullRows.MoveNext()) {
+                int nextRow = fullRows.Current;
+                
+                for (int x = 0; x < _columns; x++) {
+                    _board.EmptyCell(x, nextRow);
+                }
+
+                _board.DropFloatingRows(nextRow);
+            }
         }
 
         /// <summary>

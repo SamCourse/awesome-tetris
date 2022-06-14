@@ -50,9 +50,8 @@ namespace TetrisEngine {
         /// </summary>
         /// <param name="heading">The direction of where the tetromino should move.</param>
         /// <returns> True if the move was successful, false if unsuccessful </returns>
-        private bool MakeMove(Heading heading) {
-
-            int[,] matrixValue = _currentShape.matrix.Value;
+        private bool AttemptMove(Heading heading) {
+            int[,] matrixValue = _currentTetromino.matrix.Value;
 
             // Define two queues of actions that may or may not be executed.
             // All the delete actions need to be performed first, then the update actions afterwards.
@@ -60,16 +59,18 @@ namespace TetrisEngine {
             List<Action> deleteActionQueue = new List<Action>();
             List<Action> updateActionQueue = new List<Action>();
 
-            for (int y = 0; y < matrixValue.GetLength(0); y++) {
-                for (int x = 0; x < matrixValue.GetLength(1); x++) {
+            int matrixHeight = matrixValue.GetLength(0);
+            int matrixWidth = matrixValue.GetLength(1);
+
+            for (int y = 0; y < matrixHeight; y++) {
+                for (int x = 0; x < matrixWidth; x++) {
                     // Get the type of the current position (and the entire tetromino if this is not 0)
-                    int tetrominoType = matrixValue[x, y];
-                    
+                    int tetrominoType = matrixValue[y, x];
+
                     // If at the current coordinates, there is a 0, skip this iteration.
-                    if (tetrominoType == 0) {
+                    if (tetrominoType == 0)
                         continue;
-                    }
-                    
+
                     // Get the current coordinates of the single point in the matrix
                     int coordCurrX = _currentTetromino.xPos + x;
                     int coordCurrY = _currentTetromino.yPos - (matrixHeight - 1) + y;
@@ -90,19 +91,25 @@ namespace TetrisEngine {
                             break;
                     }
 
-                    // If the cell at one of the new positions is already set, this action is not possible
-                    if (_board.CellIsSet(coordNewX, coordNewY)) {
+                    if (coordNewX > _columns - 1 || coordNewX < 0) { // If out of bounds on the side, do nothing
+                        return true;
+                    }
+
+                    if (coordNewY > _rows - 1) { // If at bottom, finish this piece
                         return false;
+                    }
+
+                    // If the cell at one of the new positions is already set and
+                    // it is not the same tetromino's old cells, this action is not possible
+                    if (_board.CellIsSet(coordNewX, coordNewY) &&
+                        !_currentTetromino.IsOnCoordinates(coordNewX, coordNewY)) {
+                        return heading != Heading.DOWN; // If the move is not DOWN but LEFT or RIGHT,
+                                                        // don't process move but keep playing with same piece
                     }
 
                     // Add the two actions to their respective queues, to be performed if none of the given cells are set.
                     deleteActionQueue.Add(() => _board.EmptyCell(coordCurrX, coordCurrY));
-                    
-                    updateActionQueue.Add(() => {
-                        _currentShape.xPos = coordNewX;
-                        _currentShape.yPos = coordNewY;
-                        _board.SetCell(coordNewX, coordNewY, tetrominoType);
-                    });
+                    updateActionQueue.Add(() => _board.SetCell(coordNewX, coordNewY, tetrominoType));
                 }
             }
 

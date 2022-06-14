@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using TetrisEngine;
 
 namespace TetrisClient {
@@ -12,15 +13,25 @@ namespace TetrisClient {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-
+        private DispatcherTimer Timer;
         private TetrisGame _game;
 
-        public MainWindow()
-        {
+        public MainWindow() {
             InitializeComponent();
+        }
+
+        private void StartUpdateBoardTask() {
+            Timer = new DispatcherTimer();
+            Timer.Tick += dispatcherTimer_Tick;
+            Timer.Interval = new TimeSpan(0, 0, 0, 0, 10); // Update every 10 ms.
+            Timer.Start();
         }
         
         public void UpdateBoard() {
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateBoard();
+        }
             int[,] board = _game.CurrentBoard();
             
             

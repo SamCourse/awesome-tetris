@@ -51,5 +51,31 @@
         internal bool CellIsSet(int x, int y) {
             return _board[y, x] != 0;
         }
+
+        /// <summary>
+        /// Checks the board for rows that are full.
+        /// </summary>
+        /// <returns>A IEnumerator of row indexes that are full.</returns>
+        [Pure]
+        internal IEnumerator<int> GetCompleteRows() {
+            return
+                Range(0, _board.GetLength(0))
+                    .Where(y => 
+                        Range(0, _board.GetLength(1))
+                            .All(x => CellIsSet(x, y))
+                        ).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Drops all the floating rows down by one if a row was deleted.
+        /// </summary>
+        /// <param name="deletedRow">The row that was deleted</param>
+        internal void DropFloatingRows(int deletedRow) {
+            for (int y = deletedRow; y > 0; y--) { // Start at deleted row, move all the way up
+                for (int x = 0; x < _board.GetLength(1); x++) { // Iterate over the columns on this row
+                    _board[y, x] = _board[y - 1, x]; // Copy the row above
+                }
+            }
+        }
     }
 }

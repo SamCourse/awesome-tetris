@@ -46,9 +46,10 @@
         /// </summary>
         /// <param name="x"> The X-coordinate of the cell that needs to be checked</param>
         /// <param name="y"> The Y-coordinate of the cell that needs to be checked</param>
-        /// <returns> Returns whether the given coordinates has a cell that is not equal to 0.</returns>
+        /// <returns> Returns whether the value of the cell at the given coordinates is not equal to 0.</returns>
+        [Pure]
         internal bool CellIsSet(int x, int y) {
-            return _board[y, x] == 0;
+            return _board[y, x] != 0;
         }
     }
 }

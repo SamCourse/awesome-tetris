@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -46,11 +48,11 @@ namespace TetrisClient {
         }
 
         /// <summary>
-        /// Draw a point at the given coordinates
+        /// Draw a rectangle at the given coordinates
         /// </summary>
         /// <param name="x">The x coordinate of the point</param>
         /// <param name="y">The y coordinate of the point</param>
-        /// <param name="type">The type of tetromino</param>
+        /// <param name="type">The type of tetromino, see <see cref="Constants.ColorMap"/> and <see cref="Shapes.shapes"/>.</param>
         private void DrawCell(int x, int y, int type) {
             Rectangle rectangle = new Rectangle {
                 Width = 25, // Width of a cell in the grid
@@ -65,6 +67,9 @@ namespace TetrisClient {
             Grid.SetColumn(rectangle, x); // Place the column
         }
 
+        /// <summary>
+        /// Used to clear the TetrisGrid of all the Tetrominos.
+        /// </summary>
         private void ClearBoard() {
             // Get all children of grid that are of type Rectangle using a LINQ Where
             List<UIElement> rectangles = 
@@ -76,6 +81,11 @@ namespace TetrisClient {
                 TetrisGrid.Children.Remove(rectangle);
             }
         }
+
+        /// <summary>
+        /// Start button click handler.
+        /// When the start button is clicked, the game is initialized.
+        /// </summary>
         private void StartButton_Click(object sender, RoutedEventArgs e) {
             // Hide the start game modal
             StartModal.Visibility = Visibility.Hidden;
@@ -90,19 +100,22 @@ namespace TetrisClient {
             
             StartUpdateBoardTask();
         }
-        
-        
-        private void HowToButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Open a wikihow page on how to play Tetris.
-            Process.Start(new ProcessStartInfo
-            {
+
+
+        /// <summary>
+        /// Opens a WikiHow page on how to play Tetris
+        /// </summary>
+        private void HowToButton_Click(object sender, RoutedEventArgs e) {
+            Process.Start(new ProcessStartInfo {
                 FileName = "https://www.wikihow.com/Play-Tetris",
                 UseShellExecute = true
             });
         }
 
-        private void KeyPressed(object sender, KeyEventArgs keyPress) {
+        /// <summary>
+        /// The event handler that handles key presses. Only up-down-left-right and ASDW are handled here.
+        /// </summary>
+        public void KeyPressed(object sender, KeyEventArgs keyPress) {
             switch (keyPress.Key) {
                 default:
                     return;

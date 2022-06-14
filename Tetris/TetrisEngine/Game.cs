@@ -79,6 +79,7 @@ namespace TetrisEngine {
                     int coordCurrX = _currentTetromino.xPos + x;
                     int coordCurrY = _currentTetromino.yPos - (matrixHeight - 1) + y;
 
+                    // Define copies of current coordinates to be used for new coordinates.
                     int coordNewX = coordCurrX;
                     int coordNewY = coordCurrY;
 

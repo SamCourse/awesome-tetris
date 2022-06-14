@@ -1,4 +1,8 @@
-﻿namespace TetrisEngine {
+﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using static System.Linq.Enumerable;
+
+namespace TetrisEngine {
     internal class Board {
         /// <summary>
         /// The board is represented as a list of a list of integers. Example:
@@ -25,7 +29,7 @@
         /// <param name="y"> The Y-coordinate of the cell that needs to be set </param>
         /// <param name="type">
         /// The type of the shape that is placed here.
-        /// Different shapes have corresponding numbers. These can be found in Shapes.cs.
+        /// Different shapes have corresponding numbers. See <see cref="Shapes.shapes"/>.
         /// 0 can be passed to clear the cell.
         /// </param>
         internal void SetCell(int x, int y, int type) {

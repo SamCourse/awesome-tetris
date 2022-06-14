@@ -12,7 +12,7 @@ namespace TetrisEngine {
         private int _rows;
         private int _columns;
         private List<Matrix> _queue { get; }
-        private Shape _currentShape;
+        private Tetromino _currentTetromino;
         private Board _board;
         
         public TetrisGame(int rows, int columns) {
@@ -26,9 +26,9 @@ namespace TetrisEngine {
         /// Initializes the game. TODO: More info
         /// </summary>
         public void InitializeGame() {
-            // Queue 3 shapes
+            // Queue 3 tetromino's
             for (int i = 0; i < 3; i++) {
-                QueueNewShape();
+                QueueNewTetromino();
             }
         }
         
@@ -38,9 +38,9 @@ namespace TetrisEngine {
         }
 
         /// <summary>
-        /// Tries to make the move with the given shape.
+        /// Tries to make the move with the current tetromino in the given direction.
         /// </summary>
-        /// <param name="heading">The direction of where the matrix should move.</param>
+        /// <param name="heading">The direction of where the tetromino should move.</param>
         /// <returns> True if the move was successful, false if unsuccessful </returns>
         private bool MakeMove(Heading heading) {
 
@@ -97,20 +97,20 @@ namespace TetrisEngine {
                     });
                 }
             }
-            
-            foreach (Action deleteCell in deleteActionQueue) {
-                deleteCell();
+
             }
 
-            foreach (Action updateCellAndShape in updateActionQueue) {
-                updateCellAndShape();
-            }
+            foreach (Action deleteCell in deleteActionQueue)
+                deleteCell();
+
+            foreach (Action updateCellAndTetromino in updateActionQueue)
+                updateCellAndTetromino();
 
             return true;
         }
 
         /// <summary>
-        /// Tries to move the shape. If unsuccesful, spawns the next one in the queue.
+        /// Tries to move the tetromino. If unsuccesful, spawns the next one in the queue.
         /// </summary>
         /// <param name="heading">The direction the move is in.</param>
         private void Move(Heading heading) {
@@ -152,18 +152,22 @@ namespace TetrisEngine {
             // Get and removes the next tetromino from the queue
             Matrix matrix = _queue[0];
             _queue.RemoveAt(0);
-            
-            // Add a new tetromino to the queue
-            QueueNewShape();
 
-            // Create a new shape with the randomly picked tetromino and the default starting position
-            _currentShape = new Shape(matrix, _columns / 2 - 1, 0);
+            // Add a new tetromino to the queue
+            QueueNewTetromino();
+
+            // Create a new tetromino with the randomly picked shape and the default starting position
+            _currentTetromino = new Tetromino(
+                matrix,
+                _columns / 2 - 1,
+                matrix.Value.GetLength(0) - 1);
+
         }
 
         /// <summary>
         /// Adds a new random tetromino to the queue.
         /// </summary>
-        private void QueueNewShape() {
+        private void QueueNewTetromino() {
             _queue.Add(Shapes.RandomShape());
         }
     }

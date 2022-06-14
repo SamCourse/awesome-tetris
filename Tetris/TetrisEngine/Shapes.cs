@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace TetrisEngine {
-    public class Shape {
+    public class Tetromino {
         public Matrix matrix { get; }
         public int xPos { get; set; }
         public int yPos { get; set; }
@@ -11,7 +11,7 @@ namespace TetrisEngine {
         /// <param name="matrix">The matrix of the tetromino.</param>
         /// <param name="yPos">The highest Y coordinate of the matrix' position.</param>
         /// <param name="xPos">The lowest X coordinate of the matrix' position.</param>
-        public Shape(Matrix matrix, int xPos, int yPos) {
+        public Tetromino(Matrix matrix, int xPos, int yPos) {
             this.matrix = matrix;
             this.xPos = xPos;
             this.yPos = yPos;
@@ -23,7 +23,7 @@ namespace TetrisEngine {
         /// 
         /// <summary>
         /// A list of Shapes used in Tetris. They are represented as Matrixes.
-        /// Shapes have a corresponding number. This is used to be able to identify different shapeson a board.
+        /// Shapes have a corresponding number. This is used to be able to identify different shapes on a board. <br/>
         /// I: 1
         /// J: 2
         /// L: 3

@@ -16,6 +16,27 @@ namespace TetrisEngine {
             this.xPos = xPos;
             this.yPos = yPos;
         }
+
+        public bool IsOnCoordinates(int xCoord, int yCoord) {
+            int matrixHeight = matrix.Value.GetLength(0);
+            int matrixWidth = matrix.Value.GetLength(1);
+
+            for (int y = 0; y < matrixHeight; y++) {
+                for (int x = 0; x < matrixWidth; x++) {
+                    int currentCellXPos = xPos + x;
+                    int currentCellYPos = yPos - (matrixHeight - 1 - y);
+                    int tetroType = matrix.Value[y, x];
+
+                    if (xCoord == currentCellXPos &&
+                        yCoord == currentCellYPos &&
+                        tetroType != 0) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 
     public static class Shapes {

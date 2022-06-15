@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace TetrisEngine {
     internal enum Heading {
@@ -16,6 +17,7 @@ namespace TetrisEngine {
         public readonly List<Matrix> _queue;
         private Tetromino _currentTetromino;
         private Board _board;
+        private Timer _timer;
         
         public TetrisGame(int rows, int columns) {
             _rows = rows;
@@ -34,14 +36,14 @@ namespace TetrisEngine {
             }
 
             SpawnNextTetromino();
-            FallTimer();
+            
+            SetupFallTimer();
         }
 
-        private async void FallTimer() {
-            while (true) {
-                await Task.Delay(1000);
-                MoveDown();
-            }
+        private void SetupFallTimer() {
+            _timer = new Timer(1000);
+            _timer.Elapsed += (_, _) => Move(Heading.DOWN);
+            _timer.Start();
         }
 
         /// <returns> The current board as int[,] object. Can be used to update the view. </returns>
@@ -149,7 +151,6 @@ namespace TetrisEngine {
 
             if (!moveSuccesful) {
                 CheckForFullRows();
-                
                 SpawnNextTetromino();
             }
         }
@@ -169,10 +170,16 @@ namespace TetrisEngine {
         }
 
         /// <summary>
-        /// Moves the current tetromino down
+        /// Moves the current tetromino down.
+        /// This should only be called when user input is given, because this method resets the automatic drop timer.
         /// </summary>
         public void MoveDown() {
             Move(Heading.DOWN);
+            
+            // An... interesting way to reset the current interval on the timer.
+            // There sadly don't seem to be other ways to achieve this.
+            _timer.Stop();
+            _timer.Start();
         }
 
         public void Rotate() {
@@ -194,7 +201,8 @@ namespace TetrisEngine {
                     int rotatedCoordX = postRotate.xPos + x;
                     int rotatedCoordY = postRotate.yPos - (rotatedMatrix.Value.GetLength(0) - 1) + y;
 
-                    if (rotatedCoordX > _columns - 1 || rotatedCoordX < 0) { // If out of bounds on the side, do nothing
+                    // If out of bounds on the side, don't rotate
+                    if (rotatedCoordX > _columns - 1 || rotatedCoordX < 0) { 
                         return;
                     }
 

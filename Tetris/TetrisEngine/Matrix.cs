@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using static System.Linq.Enumerable;
 
 namespace TetrisEngine {
     /// <summary>
@@ -86,12 +87,23 @@ namespace TetrisEngine {
         private Matrix Rotate(RotationMethod rotationMethod) {
             var size = Value.GetLength(0);
             var rotatedValue = new int[size, size];
-            
+
             for (var i = 0; i < size; i++)
-                for (var j = 0; j < size; j++)
-                    rotatedValue[i, j] = rotationMethod.Invoke(Value, size, i, j);
+            for (var j = 0; j < size; j++)
+                rotatedValue[i, j] = rotationMethod.Invoke(Value, size, i, j);
 
             return new Matrix(rotatedValue);
+        }
+
+        /// <summary>
+        /// Gets the amount of integers in the matrix that aren't 0. Can be used to determine how many blocks there are
+        /// in this matrix.
+        /// </summary>
+        /// <returns>The amount of non-0's in the matrix.</returns>
+        public int GetNonZeroCount() {
+            return (from int item in Value
+                    where item != 0
+                    select item).Count();
         }
     }
 }

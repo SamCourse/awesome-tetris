@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Timers;
 
 namespace TetrisEngine {
     internal enum Heading {
@@ -9,44 +9,56 @@ namespace TetrisEngine {
         RIGHT,
         NONE
     }
-    
+
     public class TetrisGame {
         private int _rows;
         private int _columns;
-        public readonly List<Matrix> _queue;
+        public readonly List<Matrix> Queue;
         private Tetromino _currentTetromino;
         private Board _board;
-        
+        private Timer _timer;
+        private Scoring _scoring;
+
+        public int[,] Board => _board._board;
+        public int Points => _scoring.Points;
+        public int Lines => _scoring.Lines;
+
         public TetrisGame(int rows, int columns) {
             _rows = rows;
             _columns = columns;
-            _queue = new List<Matrix>();
+            Queue = new List<Matrix>();
             _board = new Board(rows, columns);
         }
 
         /// <summary>
-        /// Initializes the game. TODO: More info
+        /// Initializes the game. TODO: Elaborate
         /// </summary>
         public void InitializeGame() {
+            // Initialize the scoring system with the Normal-mode scoring system.
+            _scoring = Scoring.NormalGame();
+
             // Queue 3 tetromino's
             for (int i = 0; i < 3; i++) {
                 QueueNewTetromino();
             }
 
             SpawnNextTetromino();
-            FallTimer();
+            SetupFallTimer();
         }
 
-        private async void FallTimer() {
-            while (true) {
-                await Task.Delay(1000);
-                MoveDown();
-            }
-        }
+        /// <summary>
+        /// Sets up the timer that handles the tetromino being dropped by one every x milliseconds.
+        /// </summary>
+        private void SetupFallTimer() {
+            _timer = new Timer(1000);
 
-        /// <returns> The current board as int[,] object. Can be used to update the view. </returns>
-        public int[,] CurrentBoard() {
-            return _board._board;
+            // Register the event for when a piece falls
+            _timer.Elapsed += (_, _) => {
+                Move(Heading.DOWN);
+                _scoring.Fall();
+            };
+
+            _timer.Start();
         }
 
         /// <summary>
@@ -96,11 +108,11 @@ namespace TetrisEngine {
                             break;
                     }
 
-                    if (coordNewX > _columns - 1 || coordNewX < 0) { // If out of bounds on the side, do nothing
+                    if (coordNewX >= _columns || coordNewX < 0) { // If out of bounds on the side, do nothing
                         return true;
                     }
 
-                    if (coordNewY > _rows - 1) { // If at bottom, finish this piece
+                    if (coordNewY >= _rows) { // If at bottom, finish this piece
                         return false;
                     }
 
@@ -109,7 +121,7 @@ namespace TetrisEngine {
                     if (_board.CellIsSet(coordNewX, coordNewY) &&
                         !_currentTetromino.IsOnCoordinates(coordNewX, coordNewY)) {
                         return heading != Heading.DOWN; // If the move is not DOWN but LEFT or RIGHT,
-                                                        // don't process move but keep playing with same piece
+                        // don't process move but keep playing with same piece
                     }
 
                     // Add the two actions to their respective queues, to be performed if none of the given cells are set.
@@ -148,8 +160,9 @@ namespace TetrisEngine {
             bool moveSuccesful = AttemptMove(heading);
 
             if (!moveSuccesful) {
+                _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
+
                 CheckForFullRows();
-                
                 SpawnNextTetromino();
             }
         }
@@ -169,10 +182,18 @@ namespace TetrisEngine {
         }
 
         /// <summary>
-        /// Moves the current tetromino down
+        /// Moves the current tetromino down.
+        /// This should only be called when user input is given, because this method resets the automatic drop timer.
         /// </summary>
         public void MoveDown() {
             Move(Heading.DOWN);
+
+            _scoring.SoftDrop();
+
+            // An interesting way to reset the current interval on the timer.
+            // There sadly don't seem to be other ways to achieve this.
+            _timer.Stop();
+            _timer.Start();
         }
 
         public void Rotate() {
@@ -194,7 +215,8 @@ namespace TetrisEngine {
                     int rotatedCoordX = postRotate.xPos + x;
                     int rotatedCoordY = postRotate.yPos - (rotatedMatrix.Value.GetLength(0) - 1) + y;
 
-                    if (rotatedCoordX > _columns - 1 || rotatedCoordX < 0) { // If out of bounds on the side, do nothing
+                    // If out of bounds on the side, don't rotate
+                    if (rotatedCoordX > _columns - 1 || rotatedCoordX < 0) {
                         return;
                     }
 
@@ -226,8 +248,8 @@ namespace TetrisEngine {
         /// </summary>
         private void SpawnNextTetromino() {
             // Get and removes the next tetromino from the queue
-            Matrix matrix = _queue[0];
-            _queue.RemoveAt(0);
+            Matrix matrix = Queue[0];
+            Queue.RemoveAt(0);
 
             // Add a new tetromino to the queue
             QueueNewTetromino();
@@ -244,22 +266,28 @@ namespace TetrisEngine {
         private void CheckForFullRows() {
             IEnumerator<int> fullRows = _board.GetCompleteRows();
 
+            int linesCleared = 0;
+
             while (fullRows.MoveNext()) {
                 int nextRow = fullRows.Current;
-                
+
                 for (int x = 0; x < _columns; x++) {
                     _board.EmptyCell(x, nextRow);
                 }
 
                 _board.DropFloatingRows(nextRow);
+                linesCleared++;
             }
+
+            if (linesCleared > 0)
+                _scoring.LinesCleared(linesCleared);
         }
 
         /// <summary>
         /// Adds a new random tetromino to the queue.
         /// </summary>
         private void QueueNewTetromino() {
-            _queue.Add(Shapes.RandomShape());
+            Queue.Add(Shapes.RandomShape());
         }
     }
 }

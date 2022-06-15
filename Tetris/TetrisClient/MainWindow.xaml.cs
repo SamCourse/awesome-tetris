@@ -33,6 +33,7 @@ namespace TetrisClient {
         private void dispatcherTimer_Tick(object sender, EventArgs e) {
             UpdateBoard();
             UpdateGrid();
+            UpdateScore();
         }
 
         private void UpdateBoard() {
@@ -61,6 +62,11 @@ namespace TetrisClient {
                         DrawQueueCell(x, y + shapeYStartPosition, matrix[y, x]);
                 
             }
+        }
+
+        private void UpdateScore() {
+            PointsLabel.Content = _game.Points;
+            LinesLabel.Content = _game.Lines;
         }
 
         private void DrawQueueCell(int x, int y, int type) {

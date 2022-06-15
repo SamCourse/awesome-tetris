@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="704">
-    <Canvas x:Name="WindowContainer" HorizontalAlignment="Center" Width="300">
-        <Canvas Panel.ZIndex="1" x:Name="StartModal" Width="126" Height="98" Canvas.Left="87" Canvas.Top="232">
+    <Canvas x:Name="WindowContainer">
+        <Canvas Panel.ZIndex="1" x:Name="StartModal" Width="126" Height="98" Canvas.Left="289" Canvas.Top="243">
             <Rectangle Fill="White"
                        RadiusX="8"
                        RadiusY="8"
@@ -15,7 +15,7 @@
             <Button Height="22" Width="84" Canvas.Left="21" Canvas.Top="27" Content="Start game" Click="StartButton_Click" FontFamily="Bahnschrift"/>
             <Button Height="22" Width="84" Canvas.Left="21" Canvas.Top="56" Content="How to play" Click="HowToButton_Click" FontFamily="Bahnschrift"/>
         </Canvas>
-        <Grid x:Name="TetrisGrid" Background="#FFC1C1C1" Canvas.Top="41">
+        <Grid x:Name="TetrisGrid" Background="#FFC1C1C1" Canvas.Top="41" Canvas.Left="202">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
@@ -63,10 +63,10 @@
             <Border Grid.Row="12" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
             <Border Grid.Row="14" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
             <Border Grid.Row="15" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,0,0,1" Background="{x:Null}" />
-            
+
         </Grid>
 
-        <Border Canvas.Left="328" Canvas.Top="41" CornerRadius="6" Background="LightGray">
+        <Border Canvas.Left="528" Canvas.Top="41" CornerRadius="6" Background="LightGray">
             <Canvas x:Name="QueueContainer" Width="150" Height="250">
                 <Label Content="Up next" Canvas.Left="36" FontSize="20" FontFamily="Bahnschrift" Canvas.Top="3" Height="34"/>
                 <Grid x:Name="QueueGrid" Height="200" Width="100" Canvas.Top="42" Canvas.Left="25">
@@ -87,6 +87,17 @@
                         <ColumnDefinition Width="25"/>
                     </Grid.ColumnDefinitions>
                 </Grid>
+            </Canvas>
+        </Border>
+
+        <Border Canvas.Left="27" Canvas.Top="41" CornerRadius="6" Background="LightGray" Height="125" Width="148">
+            <Canvas>
+                <Label Content="Score" FontSize="20" FontFamily="Bahnschrift" Height="34" Width="146" HorizontalContentAlignment="Center" Canvas.Left="2"/>
+                <Label Content="Points" FontSize="14" FontFamily="Bahnschrift" Canvas.Top="47" Height="25" Canvas.Left="10"/>
+                <Label Content="Lines" FontSize="14" FontFamily="Bahnschrift" Canvas.Top="81" Height="25" Canvas.Left="10"/>
+
+                <Label x:Name="PointsLabel" Height="25" Width="68" Canvas.Left="74" Canvas.Top="47"></Label>
+                <Label x:Name="LinesLabel" Height="25" Width="67" Canvas.Left="75" Canvas.Top="81"></Label>
             </Canvas>
         </Border>
     </Canvas>

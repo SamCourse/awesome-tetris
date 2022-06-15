@@ -1,10 +1,17 @@
-﻿namespace TetrisEngine {
+﻿using System;
+
+namespace TetrisEngine {
     public class Scoring {
-        public int Points;
+        public int Points { get; private set; }
+        public int Lines { get; private set; }
+
         private int _pointsPerFall;
         private int _pointsPerSoft;
         private int _multiplierPerLand;
-        
+        private LineClearFormula _lineClearRewards;
+
+        private delegate int LineClearFormula(int multiplierPerLine);
+
         /// <summary>
         /// Creates a new scoring instance using the normal game point system.
         /// Every time a piece falls one down, you get 0 points.
@@ -12,16 +19,27 @@
         /// Every time a piece lands in it's final spot, you get 2 * the amount of cells the tetromino counts.
         /// </summary>
         public static Scoring NormalGame() {
-            return new Scoring(0, 1, 2);
+            return new Scoring(pointsPerFall: 0,
+                pointsPerSoft: 1,
+                multiplierPerLand: 2,
+                
+                // With 50 points awarded per line (PPL):
+                // If there was only one line cleared, award 1 * PPL.
+                // If there were multiple lines cleared at once, award lines_cleared * 2 - 1, times PPL.
+                // This increases the amount of points per line awarded, the more lines you clear at once.
+                lineClearFormula: lines => lines > 1 ? (lines * 2 - 1) * 50 : 50);
         }
-        
-        /// <param name="pointsPerSoft">The amount of points you get per soft move downwards.</param>
-        /// <param name="multiplierPerLand">The amount of points you get per amount of blocks a tetromino has</param>
-        private Scoring(int pointsPerFall, int pointsPerSoft, int multiplierPerLand) {
+
+        /// <param name="pointsPerFall">The amount of points awarded for every automatic block drop.</param>
+        /// <param name="pointsPerSoft">The amount of points awarded per soft move downwards.</param>
+        /// <param name="multiplierPerLand">The amount of points awarded per amount of blocks a tetromino has</param>
+        /// <param name="lineClearFormula">The delegate formula for awarding points per line cleared.</param>
+        private Scoring(int pointsPerFall, int pointsPerSoft, int multiplierPerLand, LineClearFormula lineClearFormula) {
             Points = 0;
             _pointsPerFall = pointsPerFall;
             _pointsPerSoft = pointsPerSoft;
             _multiplierPerLand = multiplierPerLand;
+            _lineClearRewards = lineClearFormula;
         }
 
         /// <summary>
@@ -45,7 +63,14 @@
         public void Land(int cells) {
             Points += _multiplierPerLand * cells;
         }
-        
-        
+
+        /// <summary>
+        /// The point handler for when 1 or more lines are cleared.
+        /// </summary>
+        /// <param name="amountOfLines">The amount of lines that were cleared.</param>
+        public void LinesCleared(int amountOfLines) {
+            Points += _lineClearRewards.Invoke(amountOfLines);
+            Lines += amountOfLines;
+        }
     }
 }

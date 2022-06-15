@@ -21,6 +21,7 @@ namespace TetrisEngine {
 
         public int[,] Board => _board._board;
         public int Points => _scoring.Points;
+        public int Lines => _scoring.Lines;
 
         public TetrisGame(int rows, int columns) {
             _rows = rows;
@@ -160,7 +161,7 @@ namespace TetrisEngine {
 
             if (!moveSuccesful) {
                 _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
-                
+
                 CheckForFullRows();
                 SpawnNextTetromino();
             }
@@ -265,6 +266,8 @@ namespace TetrisEngine {
         private void CheckForFullRows() {
             IEnumerator<int> fullRows = _board.GetCompleteRows();
 
+            int linesCleared = 0;
+
             while (fullRows.MoveNext()) {
                 int nextRow = fullRows.Current;
 
@@ -273,7 +276,11 @@ namespace TetrisEngine {
                 }
 
                 _board.DropFloatingRows(nextRow);
+                linesCleared++;
             }
+
+            if (linesCleared > 0)
+                _scoring.LinesCleared(linesCleared);
         }
 
         /// <summary>

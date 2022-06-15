@@ -15,16 +15,19 @@ namespace TetrisEngine {
         /// Every time a piece falls one down, you get 0 points.
         /// Every time a piece is soft-dropped one down, you get 1 point.
         /// Every time a piece lands in it's final spot, you get 2 * the amount of cells the tetromino counts.
+        /// Every time a single line is cleared, you get 50 points.
+        /// Every time multiple lines are cleared, you get (lines * 2 - 1) * 50 points.
         /// </summary>
         public static Scoring NormalGame() {
-            return new Scoring(pointsPerFall: 0,
+            return new Scoring(
+                pointsPerFall: 0,
                 pointsPerSoft: 1,
                 multiplierPerLand: 2,
                 
                 // With 50 points awarded per line (PPL):
-                // If there was only one line cleared, award 1 * PPL.
+                // If only one line was cleared, award 1 * PPL.
                 // If there were multiple lines cleared at once, award lines_cleared * 2 - 1, times PPL.
-                // This increases the amount of points per line awarded, the more lines you clear at once.
+                // This ensures a higher yield of points, the higher the amount of lines cleared at once.
                 lineClearFormula: lines => lines > 1 ? (lines * 2 - 1) * 50 : 50);
         }
 

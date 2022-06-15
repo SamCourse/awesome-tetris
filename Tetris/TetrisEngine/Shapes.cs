@@ -86,21 +86,21 @@ namespace TetrisEngine {
             new Matrix(new int[,] {
                 { 0, 5, 5 },
                 { 5, 5, 0 },
-                { 0, 0, 0 },
+                { 0, 0, 0 }
             }),
 
             // T  ▄█▄
             new Matrix(new int[,] {
                 { 0, 6, 0 },
                 { 6, 6, 6 },
-                { 0, 0, 0 },
+                { 0, 0, 0 }
             }),
 
             // Z  ▀█▄
             new Matrix(new int[,] {
                 { 7, 7, 0 },
                 { 0, 7, 7 },
-                { 0, 0, 0 },
+                { 0, 0, 0 }
             })
         };
 

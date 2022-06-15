@@ -39,7 +39,8 @@ namespace TetrisEngine {
         }
 
         /// <summary>
-        /// Initializes the game. TODO: Elaborate
+        /// Initializes the game. Sets the gamestate and fills the tetromino queue.
+        /// Spawns the first tetromino, and sets up the automatic falling timer.
         /// </summary>
         public void InitializeGame() {
             // Initialize the scoring system with the Normal-mode scoring system.
@@ -58,7 +59,7 @@ namespace TetrisEngine {
         }
 
         /// <summary>
-        /// Sets up the timer that handles the tetromino being dropped by one every x milliseconds.
+        /// Sets up the timer that handles the tetromino being dropped every x milliseconds.
         /// </summary>
         private void SetupFallTimer() {
             _timer = new Timer(1000);
@@ -76,7 +77,7 @@ namespace TetrisEngine {
         /// Tries to make the move with the current tetromino in the given direction.
         /// </summary>
         /// <param name="direction">The direction of where the tetromino should move.</param>
-        /// <returns> True if the move was successful, false if unsuccessful </returns>
+        /// <returns> True if the move was successful, false if unsuccessful</returns>
         private bool AttemptMove(Direction direction) {
             int[,] matrixValue = _currentTetromino.matrix.Value;
 
@@ -163,7 +164,9 @@ namespace TetrisEngine {
         }
 
         /// <summary>
-        /// Tries to move the tetromino. If unsuccesful, spawns the next one in the queue.
+        /// Tries to move the current tetromino.
+        /// If unsuccesful, updates the score and checks for any completed rows. Then tries to spawn the next tetromino.
+        /// If the spawn was unsuccesful, ends the game.
         /// </summary>
         /// <param name="direction">The direction the move is in.</param>
         private void Move(Direction direction) {
@@ -202,7 +205,7 @@ namespace TetrisEngine {
 
             _scoring.SoftDrop();
 
-            // An interesting way to reset the current interval on the timer.
+            // A hacky way to reset the current interval on the timer.
             // There sadly don't seem to be other ways to achieve this.
             _timer.Stop();
             _timer.Start();
@@ -283,8 +286,9 @@ namespace TetrisEngine {
             return true;
         }
 
+       
         /// <summary>
-        /// Moves the next tetromino from the queue to the board and adds a new random tetromino to the queue.
+        /// Attempts to spawn the next tetromino.
         /// </summary>
         /// <returns>Whether the spawn is possible</returns>
         private bool AttemptSpawnNextTetromino() {
@@ -339,6 +343,10 @@ namespace TetrisEngine {
             return true;
         }
 
+        /// <summary>
+        /// Checks whether there are any full rows in the board.
+        /// If there are, removes them, drops any rows above it and updates the score
+        /// </summary>
         private void CheckForFullRows() {
             IEnumerator<int> fullRows = _board.GetCompleteRows();
             int linesCleared = 0;

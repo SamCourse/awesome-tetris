@@ -95,7 +95,7 @@ namespace TetrisEngine {
             return new Matrix(rotatedValue);
         }
 
-        /// <returns>The first Y coordinate that isn't all zeros.</returns>
+        /// <returns>The first Y coordinate that has a row that isn't all zeros.</returns>
         [Pure]
         internal int GetFirstNonEmptyRow() {
             int[,] value = Value;

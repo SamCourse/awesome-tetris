@@ -23,6 +23,9 @@ namespace TetrisClient {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Starts the updating task.
+        /// </summary>
         private void StartUpdateBoardTask() {
             _timer = new DispatcherTimer();
             _timer.Tick += UpdateTick;
@@ -30,32 +33,44 @@ namespace TetrisClient {
             _timer.Start();
         }
 
+        /// <summary>
+        /// The method that handles the update task. Updates the board, queue and score.
+        /// </summary>
         private void UpdateTick(object sender, EventArgs e) {
             UpdateBoard();
             UpdateQueue();
             UpdateScore();
         }
 
+        /// <summary>
+        /// Updates the UI board with any changes from the game engine.
+        /// </summary>
         private void UpdateBoard() {
+            // Clear the game grid
             ClearGrid(TetrisGrid);
-
             int[,] board = _game.Board;
-
+            
+            // Draw the cells from the board onto the game grid
             for (int y = 0; y < board.GetLength(0); y++)
                 for (int x = 0; x < board.GetLength(1); x++)
                     DrawCell(x, y, board[y, x]);
         }
 
+        /// <summary>
+        /// Updates the UI queue with any changes from the game engine.
+        /// </summary>
         private void UpdateQueue() {
+            // Clear the queue grid
             ClearGrid(QueueGrid);
+            
+            // Get the list of matrices that are in the queue from the engine
             List<Matrix> queue = _game.Queue.ToList();
 
             for (int i = 0; i < queue.Count; i++) {
-                int shapeYStartPosition = i * 3; // Every shape will be positioned
-                                                 // 3 Y coordinates lower than the previous.
-                                                 
+                int shapeYStartPosition = i * 3; // Every shape will be positioned 3 cells lower than the previous.
                 int[,] matrix = queue[i].Value;
 
+                // Draw the queue cells in the queue grid
                 for (int y = 0; y < matrix.GetLength(0); y++)
                     for (int x = 0; x < matrix.GetLength(1); x++)
                         DrawQueueCell(x, y + shapeYStartPosition, matrix[y, x]);
@@ -63,11 +78,20 @@ namespace TetrisClient {
             }
         }
 
+        /// <summary>
+        /// Updates the score with any changes from the game engine.
+        /// </summary>
         private void UpdateScore() {
             PointsLabel.Content = _game.Points;
             LinesLabel.Content = _game.Lines;
         }
 
+        /// <summary>
+        /// Draws a rectangle in the queue grid.
+        /// </summary>
+        /// <param name="x">The x position of what cell to draw</param>
+        /// <param name="y">The y position of what cell to draw</param>
+        /// <param name="type">The type of the cell that needs to be drawn</param>
         private void DrawQueueCell(int x, int y, int type) {
             Rectangle rectangle = new Rectangle {
                 Width = 25, // Width of a cell in the grid
@@ -83,10 +107,10 @@ namespace TetrisClient {
         }
 
         /// <summary>
-        /// Draw a rectangle at the given coordinates
+        /// Draw a rectangle on the game grid at the given coordinates
         /// </summary>
-        /// <param name="x">The x coordinate of the point</param>
-        /// <param name="y">The y coordinate of the point</param>
+        /// <param name="x">The x coordinate of the cell</param>
+        /// <param name="y">The y coordinate of the cell</param>
         /// <param name="type">The type of tetromino, see <see cref="Constants.ColorMap"/> and <see cref="Shapes.shapes"/>.</param>
         private void DrawCell(int x, int y, int type) {
             Rectangle rectangle = new Rectangle {
@@ -127,14 +151,16 @@ namespace TetrisClient {
             // Hide the start game modal
             StartModal.Visibility = Visibility.Hidden;
 
+            // Register the event listeners for key presses.
             RegisterKeyEventListener();
 
             // Create new Game object with the amount of rows and columns that is being played with
             _game = new TetrisGame(Constants.ROWS, Constants.COLUMNS);
 
-            // Start game loop
+            // Initialize the game
             _game.InitializeGame();
 
+            // Starts the loop for updating the UI
             StartUpdateBoardTask();
         }
 
@@ -153,6 +179,7 @@ namespace TetrisClient {
         /// The event handler that handles key presses. Only up-down-left-right and ASDW are handled here.
         /// </summary>
         private void KeyPressed(object sender, KeyEventArgs keyPress) {
+            // Handle key presses
             switch (keyPress.Key) {
                 default:
                     return;
@@ -180,13 +207,19 @@ namespace TetrisClient {
 
             keyPress.Handled = true;
 
+            // Update the board after handling an action
             UpdateBoard();
         }
 
+        /// <summary>
+        /// Subscribe to the KeyDown event with the KeyPressed handler
+        /// </summary>
         private void RegisterKeyEventListener() {
             KeyDown += KeyPressed;
         }
-
+        /// <summary>
+        /// Unsubscribe from the KeyDown event with the KeyPressed handler
+        /// </summary>
         private void UnregisterKeyEventListener() {
             KeyDown -= KeyPressed;
         }

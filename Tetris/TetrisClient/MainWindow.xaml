@@ -96,8 +96,8 @@
                 <Label Content="Points" FontSize="14" FontFamily="Bahnschrift" Canvas.Top="47" Height="25" Canvas.Left="10"/>
                 <Label Content="Lines" FontSize="14" FontFamily="Bahnschrift" Canvas.Top="81" Height="25" Canvas.Left="10"/>
 
-                <Label x:Name="PointsLabel" Height="25" Width="68" Canvas.Left="74" Canvas.Top="47"></Label>
-                <Label x:Name="LinesLabel" Height="25" Width="67" Canvas.Left="75" Canvas.Top="81"></Label>
+                <Label x:Name="PointsLabel" Height="25" Width="68" Canvas.Left="74" Canvas.Top="47" />
+                <Label x:Name="LinesLabel" Height="25" Width="67" Canvas.Left="75" Canvas.Top="81" />
             </Canvas>
         </Border>
     </Canvas>

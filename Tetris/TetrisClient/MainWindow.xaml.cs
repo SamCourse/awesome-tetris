@@ -25,12 +25,12 @@ namespace TetrisClient {
 
         private void StartUpdateBoardTask() {
             _timer = new DispatcherTimer();
-            _timer.Tick += dispatcherTimer_Tick;
+            _timer.Tick += UpdateTick;
             _timer.Interval = new TimeSpan(0, 0, 0, 0, 10); // Update every 10 ms.
             _timer.Start();
         }
 
-        private void dispatcherTimer_Tick(object sender, EventArgs e) {
+        private void UpdateTick(object sender, EventArgs e) {
             UpdateBoard();
             UpdateGrid();
             UpdateScore();

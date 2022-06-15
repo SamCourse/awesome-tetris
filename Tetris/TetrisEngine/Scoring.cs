@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace TetrisEngine {
     public class Scoring {
         public int Points { get; private set; }

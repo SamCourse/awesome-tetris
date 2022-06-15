@@ -6,8 +6,14 @@ namespace TetrisEngine {
     internal enum Direction {
         LEFT,
         DOWN,
-        RIGHT,
-        NONE
+        RIGHT
+    }
+    
+    internal enum GameState {
+        CREATED,
+        PLAYING,
+        PAUSED, // TODO
+        OVER
     }
 
     public class TetrisGame {
@@ -18,6 +24,7 @@ namespace TetrisEngine {
         private Board _board;
         private Timer _timer;
         private Scoring _scoring;
+        private GameState _gameState;
 
         public int[,] Board => _board._board;
         public int Points => _scoring.Points;
@@ -28,6 +35,7 @@ namespace TetrisEngine {
             _columns = columns;
             Queue = new Queue<Matrix>();
             _board = new Board(rows, columns);
+            _gameState = GameState.CREATED;
         }
 
         /// <summary>
@@ -36,13 +44,16 @@ namespace TetrisEngine {
         public void InitializeGame() {
             // Initialize the scoring system with the Normal-mode scoring system.
             _scoring = Scoring.NormalGame();
+            
+            // Set the gamestate to playing.
+            _gameState = GameState.PLAYING;
 
             // Queue 3 tetromino's
             for (int i = 0; i < 3; i++) {
                 QueueNewTetromino();
             }
 
-            SpawnNextTetromino();
+            AttemptSpawnNextTetromino();
             SetupFallTimer();
         }
 
@@ -162,7 +173,9 @@ namespace TetrisEngine {
                 _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
 
                 CheckForFullRows();
-                SpawnNextTetromino();
+                if (!AttemptSpawnNextTetromino())
+                    // GameOver
+                    _gameState = GameState.OVER;
             }
         }
 
@@ -273,7 +286,8 @@ namespace TetrisEngine {
         /// <summary>
         /// Moves the next tetromino from the queue to the board and adds a new random tetromino to the queue.
         /// </summary>
-        private void SpawnNextTetromino() {
+        /// <returns>Whether the spawn is possible</returns>
+        private bool AttemptSpawnNextTetromino() {
             // Get and removes the next tetromino from the queue
             Matrix matrix = Queue.Dequeue();
 
@@ -312,7 +326,7 @@ namespace TetrisEngine {
                 // If the cell at one of the new positions is already set,
                 // no new piece can spawn and the game is over.
                 if (_board.CellIsSet(coordX, coordY)) {
-                    return; // Don't process move and end game.
+                    return false; // Don't process move and end game.
                 }
 
                 // Add the two actions to their respective queues, to be performed if none of the given cells are set.
@@ -321,6 +335,8 @@ namespace TetrisEngine {
 
             foreach (Action addCell in addActionQueue)
                 addCell();
+
+            return true;
         }
 
         private void CheckForFullRows() {

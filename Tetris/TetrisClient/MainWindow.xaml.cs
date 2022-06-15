@@ -16,7 +16,7 @@ namespace TetrisClient {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private DispatcherTimer Timer;
+        private DispatcherTimer _timer;
         private TetrisGame _game;
 
         public MainWindow() {
@@ -24,10 +24,10 @@ namespace TetrisClient {
         }
 
         private void StartUpdateBoardTask() {
-            Timer = new DispatcherTimer();
-            Timer.Tick += dispatcherTimer_Tick;
-            Timer.Interval = new TimeSpan(0, 0, 0, 0, 10); // Update every 10 ms.
-            Timer.Start();
+            _timer = new DispatcherTimer();
+            _timer.Tick += dispatcherTimer_Tick;
+            _timer.Interval = new TimeSpan(0, 0, 0, 0, 10); // Update every 10 ms.
+            _timer.Start();
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e) {
@@ -38,20 +38,17 @@ namespace TetrisClient {
         private void UpdateBoard() {
             ClearGrid(TetrisGrid);
 
-            int[,] board = _game.CurrentBoard();
+            int[,] board = _game.Board;
 
-            for (int y = 0; y < board.GetLength(0); y++) {
-                for (int x = 0; x < board.GetLength(1); x++) {
-                    int type = board[y, x];
-                    DrawCell(x, y, type);
-                }
-            }
+            for (int y = 0; y < board.GetLength(0); y++)
+                for (int x = 0; x < board.GetLength(1); x++)
+                    DrawCell(x, y, board[y, x]);
         }
 
         private void UpdateGrid() {
             ClearGrid(QueueGrid);
 
-            List<Matrix> queue = _game._queue;
+            List<Matrix> queue = _game.Queue;
 
             for (int i = 0; i < queue.Count; i++) {
                 int shapeYStartPosition = i * 3; // Every shape will be positioned
@@ -59,13 +56,10 @@ namespace TetrisClient {
                                                  
                 int[,] matrix = queue[i].Value;
 
-                for (int y = 0; y < matrix.GetLength(0); y++) {
-                    for (int x = 0; x < matrix.GetLength(1); x++) {
-                        int type = matrix[y, x];
-
-                        DrawQueueCell(x, y + shapeYStartPosition, type);
-                    }
-                }
+                for (int y = 0; y < matrix.GetLength(0); y++)
+                    for (int x = 0; x < matrix.GetLength(1); x++)
+                        DrawQueueCell(x, y + shapeYStartPosition, matrix[y, x]);
+                
             }
         }
 
@@ -115,9 +109,9 @@ namespace TetrisClient {
                     .Where(el => el is Rectangle)
                     .ToList();
 
-            foreach (UIElement rectangle in rectangles) {
+            foreach (UIElement rectangle in rectangles)
                 grid.Children.Remove(rectangle);
-            }
+            
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <param name="value">The value of the matrix, dimensions must be equal.</param>
         /// <exception cref="ArgumentException"></exception>
-        public Matrix(int[,] value) {
+        internal Matrix(int[,] value) {
             if (value.GetLength(0) != value.GetLength(1)) {
                 // This can be removed when implementing the line-removal function,
                 // since the multidimensional array will be changed into (possibly) an odd-shaped matrix.
@@ -55,7 +55,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <returns>A new Matrix.</returns>
         [Pure]
-        public Matrix Rotate90() => Rotate((value, size, i, j) => value[size - 1 - j, i]);
+        internal Matrix Rotate90() => Rotate((value, size, i, j) => value[size - 1 - j, i]);
 
         /// <summary>
         /// Rotates the matrix counterclockwise by 90 degrees and returns a new instance of it.
@@ -76,7 +76,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <returns>A new Matrix.</returns>
         [Pure]
-        public Matrix Rotate90CounterClockwise() => Rotate((value, size, i, j) => value[j, size - 1 - i]);
+        internal Matrix Rotate90CounterClockwise() => Rotate((value, size, i, j) => value[j, size - 1 - i]);
 
         /// <summary>
         /// A private member method that recieves a rotation method <see cref="RotationMethod"/>
@@ -111,7 +111,8 @@ namespace TetrisEngine {
         /// in this matrix.
         /// </summary>
         /// <returns>The amount of non-0's in the matrix.</returns>
-        public int GetNonZeroCount() {
+        [Pure]
+        internal int GetNonZeroCount() {
             return (from int item in Value
                     where item != 0
                     select item).Count();

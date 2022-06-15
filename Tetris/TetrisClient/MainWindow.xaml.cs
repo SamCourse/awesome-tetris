@@ -32,7 +32,7 @@ namespace TetrisClient {
 
         private void UpdateTick(object sender, EventArgs e) {
             UpdateBoard();
-            UpdateGrid();
+            UpdateQueue();
             UpdateScore();
         }
 
@@ -46,7 +46,7 @@ namespace TetrisClient {
                     DrawCell(x, y, board[y, x]);
         }
 
-        private void UpdateGrid() {
+        private void UpdateQueue() {
             ClearGrid(QueueGrid);
             List<Matrix> queue = _game.Queue.ToList();
 
@@ -152,7 +152,7 @@ namespace TetrisClient {
         /// <summary>
         /// The event handler that handles key presses. Only up-down-left-right and ASDW are handled here.
         /// </summary>
-        public void KeyPressed(object sender, KeyEventArgs keyPress) {
+        private void KeyPressed(object sender, KeyEventArgs keyPress) {
             switch (keyPress.Key) {
                 default:
                     return;

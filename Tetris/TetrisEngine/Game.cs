@@ -17,8 +17,10 @@ namespace TetrisEngine {
         private Tetromino _currentTetromino;
         private Board _board;
         private Timer _timer;
+        private Scoring _scoring;
 
         public int[,] Board => _board._board;
+        public int Points => _scoring.Points;
 
         public TetrisGame(int rows, int columns) {
             _rows = rows;
@@ -31,6 +33,9 @@ namespace TetrisEngine {
         /// Initializes the game. TODO: Elaborate
         /// </summary>
         public void InitializeGame() {
+            // Initialize the scoring system with the Normal-mode scoring system.
+            _scoring = Scoring.NormalGame();
+
             // Queue 3 tetromino's
             for (int i = 0; i < 3; i++) {
                 QueueNewTetromino();
@@ -49,6 +54,7 @@ namespace TetrisEngine {
             // Register the event for when a piece falls
             _timer.Elapsed += (_, _) => {
                 Move(Heading.DOWN);
+                _scoring.Fall();
             };
 
             _timer.Start();
@@ -153,6 +159,8 @@ namespace TetrisEngine {
             bool moveSuccesful = AttemptMove(heading);
 
             if (!moveSuccesful) {
+                _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
+                
                 CheckForFullRows();
                 SpawnNextTetromino();
             }
@@ -178,6 +186,8 @@ namespace TetrisEngine {
         /// </summary>
         public void MoveDown() {
             Move(Heading.DOWN);
+
+            _scoring.SoftDrop();
 
             // An interesting way to reset the current interval on the timer.
             // There sadly don't seem to be other ways to achieve this.

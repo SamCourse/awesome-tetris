@@ -95,6 +95,17 @@ namespace TetrisEngine {
             return new Matrix(rotatedValue);
         }
 
+        /// <returns>The first Y coordinate that isn't all zeros.</returns>
+        [Pure]
+        internal int GetFirstNonEmptyRow() {
+            int[,] value = Value;
+
+            return Range(0, value.GetLength(0))
+                .FirstOrDefault(y => 
+                    Range(0, value.GetLength(1))
+                        .Any(x => value[y, x] != 0));
+        }
+
         /// <summary>
         /// Gets the amount of integers in the matrix that aren't 0. Can be used to determine how many blocks there are
         /// in this matrix.

@@ -55,8 +55,8 @@ namespace TetrisEngine {
         private static readonly List<Matrix> shapes = new() {
             // I  ▀▀▀▀ 
             new Matrix(new int[,] {
-                { 1, 1, 1, 1 },
                 { 0, 0, 0, 0 },
+                { 1, 1, 1, 1 },
                 { 0, 0, 0, 0 },
                 { 0, 0, 0, 0 }
             }),
@@ -109,7 +109,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <returns> A random shape in the form of a Matrix </returns>
         public static Matrix RandomShape() {
-            return shapes[new Random().Next(shapes.Count - 1)];
+            return shapes[new Random().Next(shapes.Count)];
         }
     }
 }

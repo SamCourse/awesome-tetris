@@ -215,8 +215,10 @@ namespace TetrisEngine {
                     int rotatedCoordX = postRotate.xPos + x;
                     int rotatedCoordY = postRotate.yPos - (rotatedMatrix.Value.GetLength(0) - 1) + y;
 
-                    // If out of bounds on the side, don't rotate
-                    if (rotatedCoordX > _columns - 1 || rotatedCoordX < 0) {
+                    // If out of bounds on the side or top, don't rotate
+                    if (rotatedCoordX > _columns - 1 || 
+                        rotatedCoordX < 0 ||
+                        rotatedCoordY < 0) {
                         return;
                     }
 
@@ -253,13 +255,47 @@ namespace TetrisEngine {
             // Add a new tetromino to the queue
             QueueNewTetromino();
 
-            // Create a new tetromino with the randomly picked shape and the default starting position
+            // Define the starting Y position of the next tetromino
+            int startingY = matrix.Value.GetLength(0) - matrix.GetFirstNonEmptyRow() - 1;
+
+            // Create a new tetromino with the randomly picked shape and the starting position
             _currentTetromino = new Tetromino(
                 matrix,
                 _columns / 2 - 1,
-                matrix.Value.GetLength(0) - 1);
+                startingY);
+            
+            // Save the two dimensions in variables
+            int matrixHeight = matrix.Value.GetLength(0);
+            int matrixWidth = matrix.Value.GetLength(1);
 
-            Move(Heading.NONE);
+            // Define a list of actions that need to be executed if all the coordinates are valid.
+            List<Action> addActionQueue = new List<Action>();
+
+            for (int y = 0; y < matrixHeight; y++)
+            for (int x = 0; x < matrixWidth; x++) {
+                // Get the type of the current position
+                int tetrominoType = matrix.Value[y, x];
+
+                // If there is a 0 at the current coordinates, skip this iteration.
+                if (tetrominoType == 0)
+                    continue;
+
+                // Get the coordinates of the current single point in the matrix
+                int coordX = _currentTetromino.xPos + x;
+                int coordY = _currentTetromino.yPos - (matrixHeight - 1) + y;
+
+                // If the cell at one of the new positions is already set,
+                // no new piece can spawn and the game is over.
+                if (_board.CellIsSet(coordX, coordY)) {
+                    return; // Don't process move and end game.
+                }
+
+                // Add the two actions to their respective queues, to be performed if none of the given cells are set.
+                addActionQueue.Add(() => _board.SetCell(coordX, coordY, tetrominoType));
+            }
+
+            foreach (Action addCell in addActionQueue)
+                addCell();
         }
 
         private void CheckForFullRows() {

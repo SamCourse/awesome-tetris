@@ -13,7 +13,7 @@ namespace TetrisEngine {
     public class TetrisGame {
         private int _rows;
         private int _columns;
-        public readonly List<Matrix> Queue;
+        public readonly Queue<Matrix> Queue;
         private Tetromino _currentTetromino;
         private Board _board;
         private Timer _timer;
@@ -26,7 +26,7 @@ namespace TetrisEngine {
         public TetrisGame(int rows, int columns) {
             _rows = rows;
             _columns = columns;
-            Queue = new List<Matrix>();
+            Queue = new Queue<Matrix>();
             _board = new Board(rows, columns);
         }
 
@@ -248,8 +248,7 @@ namespace TetrisEngine {
         /// </summary>
         private void SpawnNextTetromino() {
             // Get and removes the next tetromino from the queue
-            Matrix matrix = Queue[0];
-            Queue.RemoveAt(0);
+            Matrix matrix = Queue.Dequeue();
 
             // Add a new tetromino to the queue
             QueueNewTetromino();
@@ -287,7 +286,7 @@ namespace TetrisEngine {
         /// Adds a new random tetromino to the queue.
         /// </summary>
         private void QueueNewTetromino() {
-            Queue.Add(Shapes.RandomShape());
+            Queue.Enqueue(Shapes.RandomShape());
         }
     }
 }

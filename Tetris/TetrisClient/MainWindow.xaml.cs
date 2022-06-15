@@ -48,8 +48,7 @@ namespace TetrisClient {
 
         private void UpdateGrid() {
             ClearGrid(QueueGrid);
-
-            List<Matrix> queue = _game.Queue;
+            List<Matrix> queue = _game.Queue.ToList();
 
             for (int i = 0; i < queue.Count; i++) {
                 int shapeYStartPosition = i * 3; // Every shape will be positioned

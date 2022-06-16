@@ -108,8 +108,8 @@ namespace TetrisEngine {
         ///  Chooses a random shape from the list of pre-defined Tetris shapes
         /// </summary>
         /// <returns> A random shape in the form of a Matrix </returns>
-        public static Matrix RandomShape() {
-            return shapes[new Random().Next(shapes.Count)];
+        public static Matrix RandomShape(Random random) {
+            return shapes[random.Next(shapes.Count)];
         }
     }
 }

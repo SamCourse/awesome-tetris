@@ -5,7 +5,7 @@
     /// </summary>
     public partial class GameGrid : CustomGrid
     {
-        public GameGrid() : base(rows: 16, columns: 10, size: 30)
+        public GameGrid() : base(rows: Constants.ROWS, columns: Constants.COLUMNS, size: 30)
         {
             Draw();
         }

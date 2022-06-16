@@ -19,23 +19,27 @@ namespace TetrisEngine {
     public class TetrisGame {
         private int _rows;
         private int _columns;
-        public readonly Queue<Matrix> Queue;
+        private readonly Queue<Matrix> _queue;
         private Tetromino _currentTetromino;
         private Board _board;
         private Timer _timer;
         private Scoring _scoring;
         private GameState _gameState;
-
+        private Random _random;
+        
         public int[,] Board => _board._board;
         public int Points => _scoring.Points;
         public int Lines => _scoring.Lines;
+        public int[,] Queue => Utils.QueueToIntArr(_queue);
+        
 
-        public TetrisGame(int rows, int columns) {
+        public TetrisGame(int rows, int columns, int seed) {
             _rows = rows;
             _columns = columns;
-            Queue = new Queue<Matrix>();
+            _queue = new Queue<Matrix>();
             _board = new Board(rows, columns);
             _gameState = GameState.CREATED;
+            _random = seed == 0 ? new Random() : new Random(seed);
         }
 
         /// <summary>
@@ -293,7 +297,7 @@ namespace TetrisEngine {
         /// <returns>Whether the spawn is possible</returns>
         private bool AttemptSpawnNextTetromino() {
             // Get and removes the next tetromino from the queue
-            Matrix matrix = Queue.Dequeue();
+            Matrix matrix = _queue.Dequeue();
 
             // Add a new tetromino to the queue
             QueueNewTetromino();
@@ -369,7 +373,7 @@ namespace TetrisEngine {
         /// Adds a new random tetromino to the queue.
         /// </summary>
         private void QueueNewTetromino() {
-            Queue.Enqueue(Shapes.RandomShape());
+            _queue.Enqueue(Shapes.RandomShape(_random));
         }
     }
 }

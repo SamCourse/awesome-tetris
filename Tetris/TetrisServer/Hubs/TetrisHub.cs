@@ -1,28 +1,26 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
-namespace TetrisServer.Hubs
-{
-    public class TetrisHub : Hub
-    {
-        public async Task DropShape()
-        {
-            await Clients.Others.SendAsync("DropShape");
+namespace TetrisServer.Hubs {
+    public class TetrisHub : Hub {
+        public async Task UpdateBoard(int[,] board,
+            int[,] queue,
+            int points,
+            int lines) {
+            await Clients.Others.SendAsync("Update", board, queue, points, lines);
         }
 
-        public async Task RotateShape(string direction)
-        {
-            await Clients.Others.SendAsync("RotateShape", direction);
+        private async Task Start() {
+            var seed = Guid.NewGuid().GetHashCode();
+            await Clients.All.SendAsync("Start", seed);
         }
 
-        public async Task MoveShape(string moveDirection)
-        {
-            await Clients.Others.SendAsync("MoveShape", moveDirection);
-        }
-        
-        public async Task ReadyUp(int seed)
-        {
-            await Clients.Others.SendAsync("ReadyUp", seed);
+        public async Task ReadyUp(bool allReady) {
+            if (!allReady)
+                await Clients.Others.SendAsync("ReadyUp");
+            else
+                await Start();
         }
     }
 }

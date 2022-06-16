@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TetrisEngine;
 
 namespace TetrisClient {
     /// <summary>
@@ -29,11 +28,9 @@ namespace TetrisClient {
         /// <summary>
         /// Updates the grid with any given changes.
         /// </summary>
-        public virtual void UpdateBoard(TetrisGame game) {
+        public virtual void UpdateBoard(int[,] newGrid) {
             // Clear the grid
             ClearGrid();
-
-            int[,] newGrid = game.Board;
 
             // Draw the cells from the board onto the game grid
             for (int y = 0; y < newGrid.GetLength(0); y++)

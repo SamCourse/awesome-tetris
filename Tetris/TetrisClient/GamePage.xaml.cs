@@ -1,25 +1,26 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using TetrisEngine;
 
 namespace TetrisClient {
-    public partial class SingleplayerPage : Page {
+    public partial class GamePage : Page {
         private DispatcherTimer _timer;
         private TetrisGame _game;
 
-        public SingleplayerPage() {
+        public GamePage() {
             InitializeComponent();
         }
 
-        public void Initiate() {
+        public void Initialize(int seed = 0) {
             // Register the event listeners for key presses.
             RegisterKeyEventListener();
 
             // Create new Game object with the amount of rows and columns that is being played with
-            _game = new TetrisGame(Constants.ROWS, Constants.COLUMNS);
-
+            _game = new TetrisGame(Constants.ROWS, Constants.COLUMNS, seed);
+    
             // Initialize the game
             _game.InitializeGame();
 
@@ -41,8 +42,8 @@ namespace TetrisClient {
         /// The method that handles the update task. Updates the board, queue and score.
         /// </summary>
         private void UpdateTick(object sender, EventArgs e) {
-            GameGrid.UpdateBoard(_game);
-            QueueGrid.UpdateBoard(_game);
+            GameGrid.UpdateBoard(_game.Board);
+            QueueGrid.UpdateBoard(_game.Queue);
             UpdateScore();
         }
 
@@ -83,21 +84,23 @@ namespace TetrisClient {
             keyPress.Handled = true;
 
             // Update the game board after handling an action
-            GameGrid.UpdateBoard(_game);
+            GameGrid.UpdateBoard(_game.Board);
         }
 
         /// <summary>
         /// Subscribe to the KeyDown event with the KeyPressed handler
         /// </summary>
         private void RegisterKeyEventListener() {
-            KeyDown += KeyPressed;
+            var window = Window.GetWindow(this);
+            window.KeyDown += KeyPressed;
         }
 
         /// <summary>
         /// Unsubscribe from the KeyDown event with the KeyPressed handler
         /// </summary>
         private void UnregisterKeyEventListener() {
-            KeyDown -= KeyPressed;
+            var window = Window.GetWindow(this);
+            window.KeyDown -= KeyPressed;
         }
     }
 }

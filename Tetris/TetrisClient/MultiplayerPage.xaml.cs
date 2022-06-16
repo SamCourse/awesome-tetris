@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace TetrisClient
 {
-    public partial class MultiplayerWindow : Window
+    public partial class MultiplayerPage : Page
     {
         private HubConnection _connection;
         private Random P1Random;
         private Random P2Random;
         
-        public MultiplayerWindow()
+        public MultiplayerPage()
         {
             InitializeComponent();
 

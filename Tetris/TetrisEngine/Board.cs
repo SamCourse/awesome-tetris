@@ -54,7 +54,7 @@ namespace TetrisEngine {
         /// <returns> Returns whether the value of the cell at the given coordinates is not equal to 0.</returns>
         [Pure]
         private bool CellIsSet(int x, int y) {
-            return _board[y, x] != 0;
+            return _board[y, x] is not 0 and not -1;
         }
 
         private bool IsOutOfBounds(int x, int y) {
@@ -90,24 +90,33 @@ namespace TetrisEngine {
         }
 
 
-        internal bool SpawnNew(Tetromino tetromino) {
+        internal bool CanSpawnNew(Tetromino tetromino) {
             tetromino.xPos = _board.GetLength(1) / 2 - 1;
 
-            if (tetromino.Coordinates.Any(coordinate => CellIsSet(coordinate.Item1, coordinate.Item2)))
-                return false;
-            
+            return !tetromino.Coordinates.Any(coordinate => CellIsSet(coordinate.Item1, coordinate.Item2));
+        }
+
+        internal void SpawnNew(Tetromino tetromino) {
             foreach ((int x, int y) in tetromino.Coordinates)
                 SetCell(x, y, tetromino.Type);
-            
-            return true;
         }
 
         [Pure]
         internal bool CanPlace(Tetromino newTetromino, Tetromino oldTetromino) {
             return !newTetromino.Coordinates.Any(coordinate => {
                 (int x, int y) = coordinate;
-                return IsOutOfBounds(x, y) || CellIsSet(x, y) && !oldTetromino.IsOnCoordinates(x, y);
+                return IsOutOfBounds(x, y) || !oldTetromino.IsOnCoordinates(x, y) && CellIsSet(x, y);
             });
+        }
+
+        internal void RemoveGhostPiece() {
+            int matrixHeight = _board.GetLength(0);
+            int matrixWidth = _board.GetLength(1);
+
+            for (int y = 0; y < matrixHeight; y++)
+            for (int x = 0; x < matrixWidth; x++)
+                if (_board[y, x] == -1)
+                    _board[y, x] = 0;
         }
     }
 }

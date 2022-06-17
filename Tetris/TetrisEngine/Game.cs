@@ -68,7 +68,7 @@ namespace TetrisEngine {
         /// Spawns the first tetromino, and sets up the automatic falling timer.
         /// </summary>
         public void StartGame() {
-            AttemptSpawnNextTetromino();
+            AttemptSpawnNext();
             _timer.Start();
         }
 
@@ -95,10 +95,17 @@ namespace TetrisEngine {
 
             _currentTetromino.xPos += xOffset;
             _currentTetromino.yPos += yOffset;
+            
+            if (xOffset != 0)
+                PlaceGhostPiece();
+            
+            Place(_currentTetromino);
+        }
 
-            _currentTetromino.Coordinates.ForEach(coordinate => {
+        private void Place(Tetromino tetromino) {
+            tetromino.Coordinates.ForEach(coordinate => {
                 (int x, int y) = coordinate;
-                _board.SetCell(x, y, _currentTetromino.Type);
+                _board.SetCell(x, y, tetromino.Type);
             });
         }
 
@@ -127,7 +134,7 @@ namespace TetrisEngine {
                 _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
 
                 CheckForFullRows();
-                if (!AttemptSpawnNextTetromino())
+                if (!AttemptSpawnNext())
                     EndGame();
             }
         }
@@ -177,23 +184,35 @@ namespace TetrisEngine {
                 (int x, int y) = coordinate;
                 _board.EmptyCell(x, y);
             });
-
-            tetrominoRotated.Coordinates.ForEach(coordinate => {
-                (int x, int y) = coordinate;
-                _board.SetCell(x, y, tetrominoRotated.Type);
-            });
-
+            
+            Place(tetrominoRotated);
+            
             _currentTetromino = tetrominoRotated;
+            
+            PlaceGhostPiece();
 
             return true;
         }
 
+        private void PlaceGhostPiece() {
+            _board.RemoveGhostPiece();
+            
+            Tetromino ghostPiece = _currentTetromino.AsGhost();
+
+            while (_board.CanPlace(ghostPiece, _currentTetromino)) {
+                ghostPiece.yPos++;
+            }
+
+            ghostPiece.yPos--;
+            
+            Place(ghostPiece);
+        }
 
         /// <summary>
         /// Attempts to spawn the next tetromino.
         /// </summary>
         /// <returns>Whether the spawn is possible</returns>
-        private bool AttemptSpawnNextTetromino() {
+        private bool AttemptSpawnNext() {
             // Get and removes the next tetromino from the queue
             Matrix matrix = _queue.Peek();
 
@@ -206,10 +225,12 @@ namespace TetrisEngine {
                 0,
                 startingY);
 
-            if (_board.SpawnNew(_currentTetromino)) {
+            if (_board.CanSpawnNew(_currentTetromino)) {
                 // Add a new tetromino to the queue
                 QueueNewTetromino();
                 _queue.Dequeue();
+                PlaceGhostPiece();
+                _board.SpawnNew(_currentTetromino);
                 
                 return true;
             }

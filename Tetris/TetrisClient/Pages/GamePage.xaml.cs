@@ -46,7 +46,7 @@ namespace TetrisClient {
             UpdateScore();
         }
 
-        public void EndGame() {
+        private void EndGame() {
             GameOverScreen.Visibility = Visibility.Visible;
             RemoveKeyListener(KeyPressed);
         }

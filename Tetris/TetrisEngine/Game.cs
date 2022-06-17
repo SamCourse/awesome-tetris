@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Timers;
-using System.Xml.XPath;
 
 namespace TetrisEngine {
     public enum Direction {
@@ -19,8 +17,6 @@ namespace TetrisEngine {
     }
 
     public class TetrisGame {
-        private int _rows;
-        private int _columns;
         private readonly Queue<Matrix> _queue;
         private Tetromino _currentTetromino;
         private Board _board;
@@ -35,8 +31,6 @@ namespace TetrisEngine {
         public int[,] Queue => Utils.QueueToIntArr(_queue);
 
         public TetrisGame(int rows, int columns, int seed) {
-            _rows = rows;
-            _columns = columns;
             _queue = new Queue<Matrix>();
             _board = new Board(rows, columns);
             _gameState = GameState.CREATED;
@@ -148,12 +142,23 @@ namespace TetrisEngine {
             _scoring.SoftDrop();
 
             // A hacky way to reset the current interval on the timer.
-            // There sadly don't seem to be other ways to achieve this.
+            // There doesn't seem to be another way of achieving this.
             _timer.Stop();
             _timer.Start();
         }
 
-        private void PerformRotate(Tetromino tetrominoRotated) {
+        public bool Rotate(Direction direction) {
+            Matrix rotatedMatrix = direction switch {
+                Direction.RIGHT => _currentTetromino.matrix.Rotate90(),
+                Direction.LEFT => _currentTetromino.matrix.Rotate90CounterClockwise(),
+                _ => throw new ArgumentException("AttemptRotate() must be called with either \"LEFT\" or \"RIGHT\"")
+            };
+
+            Tetromino tetrominoRotated = new Tetromino(rotatedMatrix, _currentTetromino.xPos, _currentTetromino.yPos);
+
+            if (!_board.CanPlace(tetrominoRotated, _currentTetromino))
+                return false;
+
             _currentTetromino.Coordinates.ForEach(coordinate => {
                 (int x, int y) = coordinate;
                 _board.EmptyCell(x, y);
@@ -165,31 +170,8 @@ namespace TetrisEngine {
             });
 
             _currentTetromino = tetrominoRotated;
-        }
 
-        /// <summary>
-        /// Attempts to rotate in the given direction.
-        /// </summary>
-        /// <param name="direction">The direction of where to rotate, can be either <see cref="Direction"/> LEFT or RIGHT.</param>
-        /// <returns>Whether the rotation was succesful.</returns>
-        /// <exception cref="ArgumentException">
-        /// Thrown if anything other than LEFT or RIGHT was passed as argument
-        /// </exception>
-        public bool Rotate(Direction direction) {
-            Matrix rotatedMatrix = direction switch {
-                Direction.RIGHT => _currentTetromino.matrix.Rotate90(),
-                Direction.LEFT => _currentTetromino.matrix.Rotate90CounterClockwise(),
-                _ => throw new ArgumentException("AttemptRotate() must be called with either \"LEFT\" or \"RIGHT\"")
-            };
-
-            Tetromino tetrominoRotated = new Tetromino(rotatedMatrix, _currentTetromino.xPos, _currentTetromino.yPos);
-
-            if (_board.CanPlace(tetrominoRotated, _currentTetromino)) {
-                PerformRotate(tetrominoRotated);
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
 
@@ -210,7 +192,7 @@ namespace TetrisEngine {
             // Create a new tetromino with the randomly picked shape and the starting position
             _currentTetromino = new Tetromino(
                 matrix,
-                _columns / 2 - 1,
+                0,
                 startingY);
 
             return _board.SpawnNew(_currentTetromino);
@@ -227,7 +209,7 @@ namespace TetrisEngine {
             while (fullRows.MoveNext()) {
                 int nextRow = fullRows.Current;
 
-                for (int x = 0; x < _columns; x++)
+                for (int x = 0; x < Board.GetLength(1); x++)
                     _board.EmptyCell(x, nextRow);
 
                 _board.DropFloatingRows(nextRow);

@@ -90,6 +90,8 @@ namespace TetrisEngine {
 
 
         internal bool SpawnNew(Tetromino tetromino) {
+            tetromino.xPos = _board.GetLength(1) / 2 - 1;
+            
             foreach ((int x, int y) in tetromino.Coordinates) {
                 if (!CellIsSet(x, y))
                     SetCell(x, y, tetromino.Type);

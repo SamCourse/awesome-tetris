@@ -1,0 +1,79 @@
+﻿<Page x:Class="TetrisClient.MultiplayerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:TetrisClient"
+      xmlns:controls="clr-namespace:TetrisClient.Controls"
+      mc:Ignorable="d"
+      Title="Tetris Multiplayer" Height="650" Width="1440" Background="White">
+    <Canvas>
+        <Border x:Name="LobbyScreen" Canvas.Left="541" Canvas.Top="228" CornerRadius="15" Background="#FFA8C1CF"
+                Opacity="0.8" Panel.ZIndex="10">
+            <Canvas Height="194" Width="338" Panel.ZIndex="1">
+                <Label Content="Waiting for players to ready up..." Canvas.Left="26" Canvas.Top="10" Height="33"
+                       Width="262" FontFamily="Bahnschrift" FontSize="17" />
+                <Label Content="Player one" Canvas.Left="10" Canvas.Top="72" Height="33" Width="124"
+                       FontFamily="Bahnschrift" FontSize="22" />
+                <Button x:Name="ReadyUpButton" Click="ReadyUp_OnClick" Content="Ready up" Height="38" Width="121"
+                        Canvas.Left="207"
+                        Canvas.Top="70" FontFamily="Bahnschrift" FontSize="18" />
+                <Label Content="Player two" Canvas.Left="10" Canvas.Top="136" Height="34" Width="124"
+                       FontFamily="Bahnschrift" FontSize="22" />
+                <Rectangle Visibility="Hidden" x:Name="Player1ReadyImage" Height="34" Width="53" Canvas.Left="139"
+                           Canvas.Top="72">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="/Resources/ready.png" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Rectangle Visibility="Hidden" x:Name="Player2ReadyImage" Height="34" Width="53" Canvas.Left="139"
+                           Canvas.Top="136">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="/Resources/ready.png" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Canvas>
+        </Border>
+        <Canvas Height="640" Width="700">
+            <Label Content="Player One" Canvas.Left="244" Canvas.Top="20" Height="52" Width="216"
+                   FontFamily="Bahnschrift" FontSize="35" VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center" />
+            <Frame Canvas.Top="59" x:Name="Player1Frame" />
+        </Canvas>
+        <Canvas Height="640" Width="705" Canvas.Right="0" Canvas.Left="735">
+            <controls:GameOverScreen x:Name="GameOverScreen" Canvas.Left="202" Canvas.Top="270" Visibility="Hidden"
+                                     Panel.ZIndex="2" />
+            <Label Content="Player Two" Canvas.Left="244" Canvas.Top="20" Height="52" Width="216"
+                   FontFamily="Bahnschrift" FontSize="35" VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Center" />
+            <Border Canvas.Top="100" Canvas.Left="202" Background="LightGray">
+                <local:GameGrid x:Name="GameGridTwo" />
+            </Border>
+
+            <Border Canvas.Left="528" Canvas.Top="100" CornerRadius="6" Background="LightGray">
+                <Canvas Width="150" Height="250">
+                    <Label Content="Up next" Canvas.Left="36" FontSize="20" FontFamily="Bahnschrift" Canvas.Top="3"
+                           Height="34" />
+
+                    <local:QueueGrid x:Name="QueueGridTwo" Height="200" Width="100" Canvas.Top="42"
+                                     Canvas.Left="25" />
+                </Canvas>
+            </Border>
+
+            <Border Canvas.Left="27" Canvas.Top="100" CornerRadius="6" Background="LightGray" Height="125" Width="148">
+                <Canvas>
+                    <Label Content="Score" FontSize="20" FontFamily="Bahnschrift" Height="34" Width="146"
+                           HorizontalContentAlignment="Center" Canvas.Left="2" />
+                    <Label Content="Points" FontSize="14" FontFamily="Bahnschrift" Canvas.Top="47" Height="25"
+                           Canvas.Left="10" />
+                    <Label Content="Lines" FontSize="14" FontFamily="Bahnschrift" Canvas.Top="81" Height="25"
+                           Canvas.Left="10" />
+
+                    <Label x:Name="PointsLabelTwo" Height="25" Width="68" Canvas.Left="74" Canvas.Top="47" />
+                    <Label x:Name="LinesLabelTwo" Height="25" Width="67" Canvas.Left="75" Canvas.Top="81" />
+                </Canvas>
+            </Border>
+
+        </Canvas>
+    </Canvas>
+</Page>

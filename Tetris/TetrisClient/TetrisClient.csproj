@@ -5,13 +5,25 @@
         <TargetFramework>net5.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="ready.png" />
+      <None Remove="Resources\ready.png" />
+    </ItemGroup>
     
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.0-preview.2.21154.6" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
     
     <ItemGroup>
       <ProjectReference Include="..\TetrisEngine\TetrisEngine.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Resource Include="Resources\ready.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
 </Project>

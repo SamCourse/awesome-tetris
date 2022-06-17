@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using static System.Linq.Enumerable;
 
 namespace TetrisEngine {
     /// <summary>
@@ -25,7 +26,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <param name="value">The value of the matrix, dimensions must be equal.</param>
         /// <exception cref="ArgumentException"></exception>
-        public Matrix(int[,] value) {
+        internal Matrix(int[,] value) {
             if (value.GetLength(0) != value.GetLength(1)) {
                 // This can be removed when implementing the line-removal function,
                 // since the multidimensional array will be changed into (possibly) an odd-shaped matrix.
@@ -54,7 +55,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <returns>A new Matrix.</returns>
         [Pure]
-        public Matrix Rotate90() => Rotate((value, size, i, j) => value[size - 1 - j, i]);
+        internal Matrix Rotate90() => Rotate((value, size, i, j) => value[size - 1 - j, i]);
 
         /// <summary>
         /// Rotates the matrix counterclockwise by 90 degrees and returns a new instance of it.
@@ -75,7 +76,7 @@ namespace TetrisEngine {
         /// </summary>
         /// <returns>A new Matrix.</returns>
         [Pure]
-        public Matrix Rotate90CounterClockwise() => Rotate((value, size, i, j) => value[j, size - 1 - i]);
+        internal Matrix Rotate90CounterClockwise() => Rotate((value, size, i, j) => value[j, size - 1 - i]);
 
         /// <summary>
         /// A private member method that recieves a rotation method <see cref="RotationMethod"/>
@@ -86,12 +87,35 @@ namespace TetrisEngine {
         private Matrix Rotate(RotationMethod rotationMethod) {
             var size = Value.GetLength(0);
             var rotatedValue = new int[size, size];
-            
+
             for (var i = 0; i < size; i++)
-                for (var j = 0; j < size; j++)
-                    rotatedValue[i, j] = rotationMethod.Invoke(Value, size, i, j);
+            for (var j = 0; j < size; j++)
+                rotatedValue[i, j] = rotationMethod.Invoke(Value, size, i, j);
 
             return new Matrix(rotatedValue);
+        }
+
+        /// <returns>The first Y coordinate that has a row that isn't all zeros.</returns>
+        [Pure]
+        internal int GetFirstNonEmptyRow() {
+            int[,] value = Value;
+
+            return Range(0, value.GetLength(0))
+                .FirstOrDefault(y =>
+                    Range(0, value.GetLength(1))
+                        .Any(x => value[y, x] != 0));
+        }
+
+        /// <summary>
+        /// Gets the amount of integers in the matrix that aren't 0. Can be used to determine how many blocks there are
+        /// in this matrix.
+        /// </summary>
+        /// <returns>The amount of non-0's in the matrix.</returns>
+        [Pure]
+        internal int GetNonZeroCount() {
+            return (from int item in Value
+                where item != 0
+                select item).Count();
         }
     }
 }

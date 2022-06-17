@@ -50,10 +50,20 @@ namespace TetrisEngine {
         /// </summary>
         /// <param name="x"> The X-coordinate of the cell that needs to be checked</param>
         /// <param name="y"> The Y-coordinate of the cell that needs to be checked</param>
-        /// <returns> Returns whether the value of the cell at the given coordinates is not equal to 0.</returns>
+        /// <returns> Returns whether the value of the cell at the given coordinates is not equal to either 0 or -1.</returns>
         [Pure]
-        internal bool CellIsSet(int x, int y) {
-            return _board[y, x] != 0;
+        private bool CellIsSet(int x, int y) {
+            return _board[y, x] is not 0 and not -1;
+        }
+
+        /// <summary>
+        /// A method used to check whether the given coordinates are out of bounds.
+        /// </summary>
+        /// <returns>Whether the coordinates are outside of the board.</returns>
+        [Pure]
+        private bool IsOutOfBounds(int x, int y) {
+            return x < 0 || x >= _board.GetLength(1) ||
+                   y < 0 || y >= _board.GetLength(0);
         }
 
         /// <summary>
@@ -64,22 +74,69 @@ namespace TetrisEngine {
         internal IEnumerator<int> GetCompleteRows() {
             return
                 Range(0, _board.GetLength(0))
-                    .Where(y => 
+                    .Where(y =>
                         Range(0, _board.GetLength(1))
                             .All(x => CellIsSet(x, y))
-                        ).GetEnumerator();
+                    ).GetEnumerator();
         }
 
         /// <summary>
-        /// Drops all the floating rows down by one if a row was deleted.
+        /// Drops all the floating rows above the deleted row by one
         /// </summary>
         /// <param name="deletedRow">The row that was deleted</param>
         internal void DropFloatingRows(int deletedRow) {
-            for (int y = deletedRow; y > 0; y--) { // Start at deleted row, move all the way up
-                for (int x = 0; x < _board.GetLength(1); x++) { // Iterate over the columns on this row
-                    _board[y, x] = _board[y - 1, x]; // Copy the row above
-                }
-            }
+            for (int y = deletedRow; y > 0; y--) // Start at deleted row, move all the way up
+            for (int x = 0; x < _board.GetLength(1); x++) // Iterate over the columns on this row
+                _board[y, x] = _board[y - 1, x]; // Copy the row above
+        }
+
+
+        /// <summary>
+        /// Used to check whether a new tetromino can be spawned on the board
+        /// </summary>
+        /// <param name="tetromino">The tetromino that needs to spawn</param>
+        /// <returns>Whether the given tetromino can spawn on the board.</returns>
+        [Pure]
+        internal bool CanSpawnNew(Tetromino tetromino) {
+            tetromino.xPos = _board.GetLength(1) / 2 - 1;
+            return !tetromino.Coordinates.Any(coordinate => CellIsSet(coordinate.Item1, coordinate.Item2));
+        }
+
+        /// <summary>
+        /// Spawns a new tetromino on the position the tetromino should be at
+        /// </summary>
+        /// <param name="tetromino">The tetromino that should be spawned</param>
+        internal void SpawnNew(Tetromino tetromino) {
+            foreach ((int x, int y) in tetromino.Coordinates)
+                SetCell(x, y, tetromino.Type);
+        }
+
+        /// <summary>
+        /// Used to check whether the given tetromino can be placed at it's given coordinates
+        /// </summary>
+        /// <param name="newTetromino">The tetromino that needs to be placed</param>
+        /// <param name="oldTetromino">The old tetromino, used to make sure old and new don't overlap</param>
+        /// <returns>Whether the given tetromino can be placed.</returns>
+        [Pure]
+        internal bool CanPlace(Tetromino newTetromino, Tetromino oldTetromino) {
+            return !newTetromino.Coordinates.Any(coordinate => {
+                (int x, int y) = coordinate; // Unwrap tuple as coordinates
+                return IsOutOfBounds(x, y) || // Check whether coordinates are out of bounds
+                       !oldTetromino.IsOnCoordinates(x, y) && CellIsSet(x, y); // Check whether the cell
+                // at the current coordinates are set,
+                // or if the old tetromino was at that
+                // position.
+            });
+        }
+
+        /// <summary>
+        /// Used to remove the ghost piece from the board.
+        /// </summary>
+        internal void RemoveGhostPiece() {
+            for (int y = 0; y < _board.GetLength(0); y++)
+            for (int x = 0; x < _board.GetLength(1); x++)
+                if (_board[y, x] == -1)
+                    _board[y, x] = 0;
         }
     }
 }

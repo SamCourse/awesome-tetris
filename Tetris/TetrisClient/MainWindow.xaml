@@ -4,65 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="452" Width="658">
-    <Canvas x:Name="WindowContainer" HorizontalAlignment="Center" Width="250">
-        <Canvas Panel.ZIndex="1" x:Name="StartModal" Width="126" Height="98" Canvas.Left="62" Canvas.Top="149">
-            <Rectangle Fill="White"
-                       RadiusX="8"
-                       RadiusY="8"
-                       Width="{Binding ActualWidth, ElementName=StartModal}" 
-                       Height="{Binding ActualHeight, ElementName=StartModal}"/>
-            <Button x:Name="StartButton" Height="22" Width="84" Canvas.Left="21" Canvas.Top="27" Content="Start game" Click="StartButton_Click"/>
-            <Button x:Name="HowToButton" Height="22" Width="84" Canvas.Left="21" Canvas.Top="56" Content="How to play" Click="HowToButton_Click"/>
+        Title="MainWindow" Height="600" Width="704">
+    <Page>
+        <Canvas Panel.ZIndex="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Height="200" Width="200">
+            <Button Height="42" Width="120" Content="Singleplayer"
+                    Click="Singleplayer_Click" FontFamily="Bahnschrift" Canvas.Left="40" Canvas.Top="20"
+                    FontSize="16" />
+            <Button Height="42" Width="120" Content="Multiplayer"
+                    Click="Multiplayer_Click" FontFamily="Bahnschrift" Canvas.Left="40" Canvas.Top="79"
+                    FontSize="16" />
+            <Button Height="42" Width="120" Content="How to play"
+                    Click="HowToButton_Click" FontFamily="Bahnschrift" Canvas.Left="40" Canvas.Top="137"
+                    FontSize="16" />
         </Canvas>
-        <Grid x:Name="TetrisGrid" HorizontalAlignment="Center" Background="#FFC1C1C1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-                <ColumnDefinition Width="25"/>
-            </Grid.ColumnDefinitions>
-
-            <Border Grid.Column="0" Grid.RowSpan="16" BorderBrush="Black" BorderThickness="1,0,1,0" Background="{x:Null}" />
-            <Border Grid.Column="2" Grid.RowSpan="16" BorderBrush="Black" BorderThickness="1,0,1,0" Background="{x:Null}" />
-            <Border Grid.Column="4" Grid.RowSpan="16" BorderBrush="Black" BorderThickness="1,0,1,0" Background="{x:Null}" />
-            <Border Grid.Column="6" Grid.RowSpan="16" BorderBrush="Black" BorderThickness="1,0,1,0" Background="{x:Null}" />
-            <Border Grid.Column="8" Grid.RowSpan="16" BorderBrush="Black" BorderThickness="1,0,1,0" Background="{x:Null}" />
-            <Border Grid.Column="10" Grid.RowSpan="16" BorderBrush="Black" BorderThickness="0,0,1,0" Background="{x:Null}" />
-
-            <Border Grid.Row="0" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-            <Border Grid.Row="2" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-            <Border Grid.Row="4" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-            <Border Grid.Row="6" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-            <Border Grid.Row="8" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-            <Border Grid.Row="10" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-            <Border Grid.Row="12" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-            <Border Grid.Row="14" Grid.ColumnSpan="10" BorderBrush="Black" BorderThickness="0,1,0,1" Background="{x:Null}" />
-
-        </Grid>
-    </Canvas>
+    </Page>
 </Window>

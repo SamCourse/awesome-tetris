@@ -91,14 +91,13 @@ namespace TetrisEngine {
 
         internal bool SpawnNew(Tetromino tetromino) {
             tetromino.xPos = _board.GetLength(1) / 2 - 1;
-            
-            foreach ((int x, int y) in tetromino.Coordinates) {
-                if (!CellIsSet(x, y))
-                    SetCell(x, y, tetromino.Type);
-                else
-                    return false;
-            }
 
+            if (tetromino.Coordinates.Any(coordinate => CellIsSet(coordinate.Item1, coordinate.Item2)))
+                return false;
+            
+            foreach ((int x, int y) in tetromino.Coordinates)
+                SetCell(x, y, tetromino.Type);
+            
             return true;
         }
 

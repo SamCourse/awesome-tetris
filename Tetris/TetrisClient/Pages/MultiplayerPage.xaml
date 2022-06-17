@@ -8,7 +8,7 @@
       mc:Ignorable="d"
       Title="Tetris Multiplayer" Height="650" Width="1440" Background="White">
     <Canvas>
-        <Border x:Name="LobbyScreen" Canvas.Left="541" Canvas.Top="228" CornerRadius="15" Background="#FF81CADA" Panel.ZIndex="10">
+        <Border x:Name="LobbyScreen" Canvas.Left="541" Canvas.Top="228" CornerRadius="15" Background="#FFA8C1CF" Opacity="0.8" Panel.ZIndex="10">
             <Canvas Height="194" Width="338" Panel.ZIndex="1">
                 <Label Content="Waiting for players to ready up..." Canvas.Left="26" Canvas.Top="10" Height="33"
                        Width="262" FontFamily="Bahnschrift" FontSize="17" />

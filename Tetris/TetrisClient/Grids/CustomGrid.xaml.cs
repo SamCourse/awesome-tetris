@@ -44,15 +44,15 @@ namespace TetrisClient {
         /// <param name="x">The x coordinate of the cell</param>
         /// <param name="y">The y coordinate of the cell</param>
         /// <param name="type">The type of cell, see <see cref="Constants.ColorMap"/>.</param>
-        protected void DrawCell(int x, int y, int type) {
+        private void DrawCell(int x, int y, int type) {
             Rectangle rectangle = new Rectangle {
                 Width = _size, // Width of a cell in the grid
                 Height = _size, // Height of a cell in the grid
-                Stroke = Brushes.Transparent, // The border
-                StrokeThickness = 1, // Thickness of the border
+                Stroke = type == -1 ? Brushes.DarkSlateGray : Brushes.Transparent, // The border
+                StrokeThickness = type == -1 ? 0.5 : 2, // Thickness of the border
                 Fill = Constants.ColorMap[type] // Background color
             };
-
+    
             TetrisGrid.Children.Add(rectangle); // Add the rectangle to the grid
             SetRow(rectangle, y); // Place the row
             SetColumn(rectangle, x); // Place the column
@@ -61,7 +61,7 @@ namespace TetrisClient {
         /// <summary>
         /// Used to clear the given grid of all the rectangle objects.
         /// </summary>
-        protected void ClearGrid() {
+        private void ClearGrid() {
             // Get all children of grid that are of type Rectangle using a LINQ Where
             List<UIElement> rectangles =
                 TetrisGrid.Children.OfType<UIElement>()
@@ -92,13 +92,13 @@ namespace TetrisClient {
                     };
                 else if (i % 2 == 0)
                     border = new Border {
-                        BorderThickness = new Thickness(0, 1, 0, 1) 
+                        BorderThickness = new Thickness(0, 1, 0, 1)
                     };
                 else
                     continue;
-
-                border.BorderBrush = Brushes.Black;
-
+                
+                border.BorderBrush = new BrushConverter().ConvertFrom("#FFA8C1CF") as Brush;
+                
                 TetrisGrid.Children.Add(border);
 
                 SetRow(border, i);
@@ -124,7 +124,7 @@ namespace TetrisClient {
                 else
                     continue;
 
-                border.BorderBrush = Brushes.Black;
+                border.BorderBrush = new BrushConverter().ConvertFrom("#FFA8C1CF") as Brush;
 
                 TetrisGrid.Children.Add(border);
 

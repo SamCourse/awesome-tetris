@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Xml;
 using static System.Linq.Enumerable;
 
 namespace TetrisEngine {
@@ -52,11 +53,11 @@ namespace TetrisEngine {
         /// <param name="y"> The Y-coordinate of the cell that needs to be checked</param>
         /// <returns> Returns whether the value of the cell at the given coordinates is not equal to 0.</returns>
         [Pure]
-        internal bool CellIsSet(int x, int y) {
+        private bool CellIsSet(int x, int y) {
             return _board[y, x] != 0;
         }
 
-        internal bool IsOutOfBounds(int x, int y) {
+        private bool IsOutOfBounds(int x, int y) {
             int boardHeight = _board.GetLength(0);
             int boardWidth = _board.GetLength(1);
 
@@ -103,13 +104,10 @@ namespace TetrisEngine {
 
         [Pure]
         internal bool CanPlace(Tetromino newTetromino, Tetromino oldTetromino) {
-            foreach ((int x, int y) in newTetromino.Coordinates) {
-                if (IsOutOfBounds(x, y) ||
-                    CellIsSet(x, y) && !oldTetromino.IsOnCoordinates(x, y))
-                    return false;
-            }
-
-            return true;
+            return !newTetromino.Coordinates.Any(coordinate => {
+                (int x, int y) = coordinate;
+                return IsOutOfBounds(x, y) || CellIsSet(x, y) && !oldTetromino.IsOnCoordinates(x, y);
+            });
         }
     }
 }

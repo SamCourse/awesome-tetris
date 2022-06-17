@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using TetrisEngine;
 
 namespace TetrisClient {
@@ -22,11 +20,11 @@ namespace TetrisClient {
 
             // Initialize the game
             Game.InitializeGame();
-            
+
             Game.AddTimerListener(UpdateTick);
-            
+
             Game.StartGame();
-            
+
             Update();
         }
 

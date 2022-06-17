@@ -1,5 +1,4 @@
-﻿namespace TetrisClient
-{
+﻿namespace TetrisClient {
     /// <summary>
     /// Interaction logic for QueueGrid.xaml
     /// </summary>

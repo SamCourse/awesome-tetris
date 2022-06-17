@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -77,11 +76,8 @@ namespace TetrisClient {
                 });
             });
 
-            _connection.On("GameOver", () => {
-                Dispatcher.Invoke(() => {
-                    GameOverScreen.Visibility = Visibility.Visible;
-                });
-            });
+            _connection.On("GameOver",
+                () => { Dispatcher.Invoke(() => { GameOverScreen.Visibility = Visibility.Visible; }); });
         }
 
         private async void ReadyUp_OnClick(object sender, RoutedEventArgs e) {

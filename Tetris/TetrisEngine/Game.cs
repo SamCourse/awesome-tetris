@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Timers;
 
 namespace TetrisEngine {
@@ -19,7 +18,7 @@ namespace TetrisEngine {
 
     public class TetrisGame {
         private const int STANDARD_INTERVAL = 1000;
-        
+
         private readonly Queue<Matrix> _queue;
         private Tetromino _currentTetromino;
         private Board _board;
@@ -27,7 +26,7 @@ namespace TetrisEngine {
         private Scoring _scoring;
         public GameState GameState;
         private Random _random;
-        
+
 
         public int[,] Board => _board._board;
         public int Points => _scoring.Points;
@@ -55,14 +54,14 @@ namespace TetrisEngine {
             for (int i = 0; i < 3; i++) {
                 QueueNewTetromino();
             }
-            
+
             SetupFallTimer();
         }
 
         public void AddTimerListener(ElapsedEventHandler method) {
             if (_timer == null)
                 return;
-            
+
             _timer.Elapsed += method;
         }
 
@@ -98,10 +97,10 @@ namespace TetrisEngine {
 
             _currentTetromino.xPos += xOffset;
             _currentTetromino.yPos += yOffset;
-            
+
             if (xOffset != 0)
                 PlaceGhostPiece();
-            
+
             Place(_currentTetromino);
         }
 
@@ -135,6 +134,7 @@ namespace TetrisEngine {
                 Move(offsetX, offsetY);
                 return true;
             }
+
             if (direction == Direction.DOWN) {
                 _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
 
@@ -180,7 +180,8 @@ namespace TetrisEngine {
         }
 
         public void MoveDownHard() {
-            while (MoveDown()) { }
+            while (MoveDown()) {
+            }
         }
 
         public bool Rotate(Direction direction) {
@@ -201,7 +202,7 @@ namespace TetrisEngine {
             });
 
             _currentTetromino = tetrominoRotated;
-            
+
             PlaceGhostPiece();
             Place(tetrominoRotated);
 
@@ -210,7 +211,7 @@ namespace TetrisEngine {
 
         private void PlaceGhostPiece() {
             _board.RemoveGhostPiece();
-            
+
             Tetromino ghostPiece = _currentTetromino.AsGhost();
 
             while (_board.CanPlace(ghostPiece, _currentTetromino)) {
@@ -218,7 +219,7 @@ namespace TetrisEngine {
             }
 
             ghostPiece.yPos--;
-            
+
             Place(ghostPiece);
         }
 
@@ -245,9 +246,10 @@ namespace TetrisEngine {
                 _queue.Dequeue();
                 PlaceGhostPiece();
                 _board.SpawnNew(_currentTetromino);
-                
+
                 return true;
             }
+
             return false;
         }
 

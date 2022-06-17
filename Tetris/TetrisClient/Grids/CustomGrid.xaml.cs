@@ -52,7 +52,7 @@ namespace TetrisClient {
                 StrokeThickness = type == -1 ? 0.5 : 2, // Thickness of the border
                 Fill = Constants.ColorMap[type] // Background color
             };
-    
+
             TetrisGrid.Children.Add(rectangle); // Add the rectangle to the grid
             SetRow(rectangle, y); // Place the row
             SetColumn(rectangle, x); // Place the column
@@ -81,7 +81,7 @@ namespace TetrisClient {
                 TetrisGrid.RowDefinitions.Add(new RowDefinition {
                     Height = new GridLength(_size)
                 });
-                
+
                 if (!ShowBorders)
                     continue;
 
@@ -96,9 +96,9 @@ namespace TetrisClient {
                     };
                 else
                     continue;
-                
+
                 border.BorderBrush = new BrushConverter().ConvertFrom("#FFA8C1CF") as Brush;
-                
+
                 TetrisGrid.Children.Add(border);
 
                 SetRow(border, i);
@@ -111,7 +111,7 @@ namespace TetrisClient {
                 });
                 if (!ShowBorders)
                     continue;
-                
+
                 Border border;
                 if (i == _columns - 1)
                     border = new Border {

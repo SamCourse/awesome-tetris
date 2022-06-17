@@ -23,7 +23,7 @@ namespace TetrisEngine {
                 pointsPerFall: 0,
                 pointsPerSoft: 1,
                 multiplierPerLand: 2,
-                
+
                 // With 50 points awarded per line (PPL):
                 // If only one line was cleared, award 1 * PPL.
                 // If there were multiple lines cleared at once, award lines_cleared * 2 - 1, times PPL.
@@ -35,7 +35,8 @@ namespace TetrisEngine {
         /// <param name="pointsPerSoft">The amount of points awarded per soft move downwards.</param>
         /// <param name="multiplierPerLand">The amount of points awarded per amount of blocks a tetromino has</param>
         /// <param name="lineClearFormula">The delegate formula for awarding points per line cleared.</param>
-        private Scoring(int pointsPerFall, int pointsPerSoft, int multiplierPerLand, LineClearFormula lineClearFormula) {
+        private Scoring(int pointsPerFall, int pointsPerSoft, int multiplierPerLand,
+            LineClearFormula lineClearFormula) {
             Points = 0;
             _pointsPerFall = pointsPerFall;
             _pointsPerSoft = pointsPerSoft;

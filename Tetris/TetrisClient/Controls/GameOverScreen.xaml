@@ -6,7 +6,9 @@
              mc:Ignorable="d"
              Height="100" Width="300">
     <Canvas>
-        <Rectangle Height="100" Width="300" Fill="White" Opacity="0.8"></Rectangle>
-        <Label Content="Game over!" Height="100" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Bahnschrift" FontSize="48" Foreground="#FFF90808"/>
+        <Rectangle Height="100" Width="300" Fill="White" Opacity="0.8" />
+        <Label Content="Game over!" Height="100" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center"
+               HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Bahnschrift"
+               FontSize="48" Foreground="#FFF90808" />
     </Canvas>
 </UserControl>

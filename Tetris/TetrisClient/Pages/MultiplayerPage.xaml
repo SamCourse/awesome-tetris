@@ -8,7 +8,8 @@
       mc:Ignorable="d"
       Title="Tetris Multiplayer" Height="650" Width="1440" Background="White">
     <Canvas>
-        <Border x:Name="LobbyScreen" Canvas.Left="541" Canvas.Top="228" CornerRadius="15" Background="#FFA8C1CF" Opacity="0.8" Panel.ZIndex="10">
+        <Border x:Name="LobbyScreen" Canvas.Left="541" Canvas.Top="228" CornerRadius="15" Background="#FFA8C1CF"
+                Opacity="0.8" Panel.ZIndex="10">
             <Canvas Height="194" Width="338" Panel.ZIndex="1">
                 <Label Content="Waiting for players to ready up..." Canvas.Left="26" Canvas.Top="10" Height="33"
                        Width="262" FontFamily="Bahnschrift" FontSize="17" />
@@ -40,7 +41,8 @@
             <Frame Canvas.Top="59" x:Name="Player1Frame" />
         </Canvas>
         <Canvas Height="640" Width="705" Canvas.Right="0" Canvas.Left="735">
-            <controls:GameOverScreen x:Name="GameOverScreen" Canvas.Left="202" Canvas.Top="270" Visibility="Hidden" Panel.ZIndex="2"/>
+            <controls:GameOverScreen x:Name="GameOverScreen" Canvas.Left="202" Canvas.Top="270" Visibility="Hidden"
+                                     Panel.ZIndex="2" />
             <Label Content="Player Two" Canvas.Left="244" Canvas.Top="20" Height="52" Width="216"
                    FontFamily="Bahnschrift" FontSize="35" VerticalContentAlignment="Center"
                    HorizontalContentAlignment="Center" />

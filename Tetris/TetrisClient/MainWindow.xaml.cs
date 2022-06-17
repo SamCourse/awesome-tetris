@@ -9,7 +9,7 @@ namespace TetrisClient {
         public MainWindow() {
             InitializeComponent();
         }
-        
+
         /// <summary>
         /// Button handler for when singleplayer is chosen.
         /// </summary>

@@ -101,7 +101,7 @@ namespace TetrisEngine {
             int[,] value = Value;
 
             return Range(0, value.GetLength(0))
-                .FirstOrDefault(y => 
+                .FirstOrDefault(y =>
                     Range(0, value.GetLength(1))
                         .Any(x => value[y, x] != 0));
         }
@@ -114,8 +114,8 @@ namespace TetrisEngine {
         [Pure]
         internal int GetNonZeroCount() {
             return (from int item in Value
-                    where item != 0
-                    select item).Count();
+                where item != 0
+                select item).Count();
         }
     }
 }

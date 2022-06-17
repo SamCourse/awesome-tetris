@@ -9,16 +9,16 @@ namespace TetrisClient {
         public MainWindow() {
             InitializeComponent();
         }
-                
+        
         /// <summary>
         /// Button handler for when singleplayer is chosen.
-        /// 
         /// </summary>
         private void Singleplayer_Click(object sender, RoutedEventArgs e) {
-            Content = new SingleplayerPage();
+            var gamePage = new GamePage();
+            Content = gamePage;
+            gamePage.Initialize();
         }
 
-        
         /// <summary>
         /// Button handler for when multiplayer is chosen.
         /// </summary>

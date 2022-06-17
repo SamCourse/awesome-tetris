@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="704">
-    <Page x:Name="CurrentPage">
-        <Canvas Panel.ZIndex="1" x:Name="StartModal" HorizontalAlignment="Center" VerticalAlignment="Center"
+    <Page>
+        <Canvas Panel.ZIndex="1" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Height="200" Width="200">
             <Button Height="42" Width="120" Content="Singleplayer"
                     Click="Singleplayer_Click" FontFamily="Bahnschrift" Canvas.Left="40" Canvas.Top="20"

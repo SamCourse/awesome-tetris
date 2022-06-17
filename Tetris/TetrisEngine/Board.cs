@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Xml;
 using static System.Linq.Enumerable;
 
 namespace TetrisEngine {
@@ -52,8 +53,16 @@ namespace TetrisEngine {
         /// <param name="y"> The Y-coordinate of the cell that needs to be checked</param>
         /// <returns> Returns whether the value of the cell at the given coordinates is not equal to 0.</returns>
         [Pure]
-        internal bool CellIsSet(int x, int y) {
+        private bool CellIsSet(int x, int y) {
             return _board[y, x] != 0;
+        }
+
+        private bool IsOutOfBounds(int x, int y) {
+            int boardHeight = _board.GetLength(0);
+            int boardWidth = _board.GetLength(1);
+
+            return x < 0 || x >= boardWidth ||
+                   y < 0 || y >= boardHeight;
         }
 
         /// <summary>
@@ -78,7 +87,27 @@ namespace TetrisEngine {
             for (int y = deletedRow; y > 0; y--) // Start at deleted row, move all the way up
             for (int x = 0; x < _board.GetLength(1); x++) // Iterate over the columns on this row
                 _board[y, x] = _board[y - 1, x]; // Copy the row above
+        }
+
+
+        internal bool SpawnNew(Tetromino tetromino) {
+            tetromino.xPos = _board.GetLength(1) / 2 - 1;
+
+            if (tetromino.Coordinates.Any(coordinate => CellIsSet(coordinate.Item1, coordinate.Item2)))
+                return false;
             
+            foreach ((int x, int y) in tetromino.Coordinates)
+                SetCell(x, y, tetromino.Type);
+            
+            return true;
+        }
+
+        [Pure]
+        internal bool CanPlace(Tetromino newTetromino, Tetromino oldTetromino) {
+            return !newTetromino.Coordinates.Any(coordinate => {
+                (int x, int y) = coordinate;
+                return IsOutOfBounds(x, y) || CellIsSet(x, y) && !oldTetromino.IsOnCoordinates(x, y);
+            });
         }
     }
 }

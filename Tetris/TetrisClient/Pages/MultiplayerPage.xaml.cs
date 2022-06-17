@@ -129,6 +129,7 @@ namespace TetrisClient {
                 case Key.Right:
                 case Key.W:
                 case Key.Up:
+                case Key.Space:
                     DispatchUpdate();
                     break;
             }

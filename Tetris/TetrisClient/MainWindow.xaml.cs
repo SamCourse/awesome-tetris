@@ -3,9 +3,9 @@ using System.Windows;
 
 namespace TetrisClient {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// The main menu window which is the first page the user sees.
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow {
         public MainWindow() {
             InitializeComponent();
         }
@@ -14,13 +14,17 @@ namespace TetrisClient {
         /// Button handler for when singleplayer is chosen.
         /// </summary>
         private void Singleplayer_Click(object sender, RoutedEventArgs e) {
+            // Create a new GamePage
             var gamePage = new GamePage();
             Content = gamePage;
+            
+            // Initializes and starts the game.
             gamePage.Initialize();
         }
 
         /// <summary>
         /// Button handler for when multiplayer is chosen.
+        /// Opens the multiplayer screen and sets the window dimensions.
         /// </summary>
         private void Multiplayer_Click(object sender, RoutedEventArgs e) {
             Content = new MultiplayerPage();
@@ -30,7 +34,7 @@ namespace TetrisClient {
 
 
         /// <summary>
-        /// Opens a WikiHow page on how to play Tetris
+        /// Opens a WikiHow page on how to play Tetris, very useful indeed.
         /// </summary>
         private void HowToButton_Click(object sender, RoutedEventArgs e) {
             Process.Start(new ProcessStartInfo {

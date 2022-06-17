@@ -13,7 +13,7 @@ namespace TetrisClient {
         /// A Dictionary of tetris shape number as key, with the corresponding color as the value.
         /// </summary>
         public static readonly Dictionary<int, SolidColorBrush> ColorMap = new() {
-            { -1, Brushes.Transparent },
+            { -1, Brushes.Transparent }, // Ghost piece is transparent, but has borders.
             { 0, Brushes.Transparent },
             { 1, Brushes.Aqua },
             { 2, Brushes.Blue },

@@ -213,12 +213,7 @@ namespace TetrisEngine {
                 _columns / 2 - 1,
                 startingY);
 
-            if (_board.CanPlace(_currentTetromino)) {
-                Move(0, 0);
-                return true;
-            }
-
-            return false;
+            return _board.SpawnNew(_currentTetromino);
         }
 
         /// <summary>

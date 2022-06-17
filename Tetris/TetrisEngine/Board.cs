@@ -88,13 +88,23 @@ namespace TetrisEngine {
                 _board[y, x] = _board[y - 1, x]; // Copy the row above
         }
 
-        [Pure]
-        internal bool CanPlace(Tetromino newTetromino, Tetromino oldTetromino = null) {
-            List<(int, int)> coordinates = newTetromino.Coordinates;
 
-            foreach ((int x, int y) in coordinates) {
-                if (IsOutOfBounds(x, y) 
-                    || CellIsSet(x, y) && (!oldTetromino?.IsOnCoordinates(x, y) ?? true))
+        internal bool SpawnNew(Tetromino tetromino) {
+            foreach ((int x, int y) in tetromino.Coordinates) {
+                if (!CellIsSet(x, y))
+                    SetCell(x, y, tetromino.Type);
+                else
+                    return false;
+            }
+
+            return true;
+        }
+
+        [Pure]
+        internal bool CanPlace(Tetromino newTetromino, Tetromino oldTetromino) {
+            foreach ((int x, int y) in newTetromino.Coordinates) {
+                if (IsOutOfBounds(x, y) ||
+                    CellIsSet(x, y) && !oldTetromino.IsOnCoordinates(x, y))
                     return false;
             }
 

@@ -18,6 +18,8 @@ namespace TetrisEngine {
     }
 
     public class TetrisGame {
+        private const int STANDARD_INTERVAL = 1000;
+        
         private readonly Queue<Matrix> _queue;
         private Tetromino _currentTetromino;
         private Board _board;
@@ -77,7 +79,7 @@ namespace TetrisEngine {
         /// Sets up the timer that handles the tetromino being dropped every x milliseconds.
         /// </summary>
         private void SetupFallTimer() {
-            _timer = new Timer(1000);
+            _timer = new Timer(STANDARD_INTERVAL);
 
             // Register the event for when a piece falls
             AddTimerListener(TimerTick);
@@ -267,8 +269,17 @@ namespace TetrisEngine {
                 linesCleared++;
             }
 
-            if (linesCleared > 0)
+            if (linesCleared > 0) {
                 _scoring.LinesCleared(linesCleared);
+                ReduceIntervalCheck();
+            }
+        }
+
+        private void ReduceIntervalCheck() {
+            if (_scoring.Lines > 5) {
+                int lines5Amount = _scoring.Lines / 5;
+                _timer.Interval = Convert.ToDouble(STANDARD_INTERVAL * Math.Pow(0.75, lines5Amount));
+            }
         }
 
         /// <summary>

@@ -4,12 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:TetrisClient"
+        xmlns:controls="clr-namespace:TetrisClient.Controls"
         mc:Ignorable="d"
         Title="Tetris" Height="600" Width="700">
     <Canvas>
-        <Canvas x:Name="GameOverScreen" Visibility="Hidden" Panel.ZIndex="10">
-            <Label Content="Game over!" Height="104" Width="390" Canvas.Left="155" Canvas.Top="248" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Bahnschrift" FontSize="48" Background="{x:Null}" Foreground="Red"/>
-        </Canvas>
+        <controls:GameOverScreen x:Name="GameOverScreen" Visibility="Hidden" Panel.ZIndex="2" Canvas.Left="200" Canvas.Top="250"/>
 
         <Border Canvas.Top="41" Canvas.Left="198" Background="LightGray">
             <local:GameGrid x:Name="GameGrid" />

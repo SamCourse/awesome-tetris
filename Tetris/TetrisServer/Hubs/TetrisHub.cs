@@ -22,5 +22,9 @@ namespace TetrisServer.Hubs {
             else
                 await Start();
         }
+
+        public async Task GameOver() {
+            await Clients.Others.SendAsync("GameOver");
+        }
     }
 }

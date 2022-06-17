@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
+using TetrisEngine;
 
 namespace TetrisClient {
     public partial class MultiplayerPage {
@@ -76,6 +77,10 @@ namespace TetrisClient {
                 });
             });
 
+            _connection.On("GameOver", () => {
+                Dispatcher.Invoke(() => {
+                    GameOverScreen.Visibility = Visibility.Visible;
+                });
             });
         }
 
@@ -99,11 +104,15 @@ namespace TetrisClient {
         }
 
         private async void DispatchUpdate() {
-            await _connection.InvokeAsync("UpdateBoard",
-                JsonConvert.SerializeObject(_p1GamePage.Game.Board),
-                JsonConvert.SerializeObject(_p1GamePage.Game.Queue),
-                _p1GamePage.Game.Points,
-                _p1GamePage.Game.Lines);
+            if (_p1GamePage.Game.GameState == GameState.OVER)
+                await _connection.InvokeAsync("GameOver");
+            else {
+                await _connection.InvokeAsync("UpdateBoard",
+                    JsonConvert.SerializeObject(_p1GamePage.Game.Board),
+                    JsonConvert.SerializeObject(_p1GamePage.Game.Queue),
+                    _p1GamePage.Game.Points,
+                    _p1GamePage.Game.Lines);
+            }
         }
 
         /// <summary>

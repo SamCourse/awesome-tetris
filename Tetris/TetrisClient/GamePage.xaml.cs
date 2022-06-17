@@ -6,7 +6,7 @@ using System.Windows.Threading;
 using TetrisEngine;
 
 namespace TetrisClient {
-    public partial class GamePage : Page {
+    public partial class GamePage {
         private DispatcherTimer _timer;
         private TetrisGame _game;
 
@@ -16,7 +16,7 @@ namespace TetrisClient {
 
         public void Initialize(int seed = 0) {
             // Register the event listeners for key presses.
-            RegisterKeyEventListener();
+            RegisterKeyListener();
 
             // Create new Game object with the amount of rows and columns that is being played with
             _game = new TetrisGame(Constants.ROWS, Constants.COLUMNS, seed);
@@ -42,9 +42,18 @@ namespace TetrisClient {
         /// The method that handles the update task. Updates the board, queue and score.
         /// </summary>
         private void UpdateTick(object sender, EventArgs e) {
+            if (_game.GameState == GameState.OVER)
+                EndGame();
+            
             GameGrid.UpdateBoard(_game.Board);
             QueueGrid.UpdateBoard(_game.Queue);
             UpdateScore();
+        }
+
+        public void EndGame() {
+            GameOverScreen.Visibility = Visibility.Visible;
+            _timer.Stop();
+            RemoveKeyListener();
         }
 
         /// <summary>
@@ -91,7 +100,7 @@ namespace TetrisClient {
         /// <summary>
         /// Subscribe to the KeyDown event with the KeyPressed handler
         /// </summary>
-        private void RegisterKeyEventListener() {
+        private void RegisterKeyListener() {
             var window = Window.GetWindow(this);
             window.KeyDown += KeyPressed;
         }
@@ -99,7 +108,7 @@ namespace TetrisClient {
         /// <summary>
         /// Unsubscribe from the KeyDown event with the KeyPressed handler
         /// </summary>
-        private void UnregisterKeyEventListener() {
+        private void RemoveKeyListener() {
             var window = Window.GetWindow(this);
             window.KeyDown -= KeyPressed;
         }

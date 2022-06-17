@@ -9,7 +9,7 @@ namespace TetrisEngine {
         RIGHT
     }
 
-    internal enum GameState {
+    public enum GameState {
         CREATED,
         PLAYING,
         PAUSED, // TODO
@@ -22,8 +22,9 @@ namespace TetrisEngine {
         private Board _board;
         private Timer _timer;
         private Scoring _scoring;
-        private GameState _gameState;
+        public GameState GameState;
         private Random _random;
+        
 
         public int[,] Board => _board._board;
         public int Points => _scoring.Points;
@@ -33,7 +34,7 @@ namespace TetrisEngine {
         public TetrisGame(int rows, int columns, int seed) {
             _queue = new Queue<Matrix>();
             _board = new Board(rows, columns);
-            _gameState = GameState.CREATED;
+            GameState = GameState.CREATED;
             _random = seed == 0 ? new Random() : new Random(seed);
         }
 
@@ -46,7 +47,7 @@ namespace TetrisEngine {
             _scoring = Scoring.NormalGame();
 
             // Set the gamestate to playing.
-            _gameState = GameState.PLAYING;
+            GameState = GameState.PLAYING;
 
             // Queue 3 tetromino's
             for (int i = 0; i < 3; i++) {
@@ -113,8 +114,7 @@ namespace TetrisEngine {
 
                 CheckForFullRows();
                 if (!AttemptSpawnNextTetromino())
-                    // TODO: GameOver
-                    _gameState = GameState.OVER;
+                    GameState = GameState.OVER;
             }
         }
 

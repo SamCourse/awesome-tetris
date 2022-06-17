@@ -15,19 +15,19 @@ namespace TetrisClient {
 
         public void Initialize(int seed = 0) {
             // Register the event listeners for key presses.
-            RegisterKeyListener();
+            RegisterKeyListener(KeyPressed);
 
             // Create new Game object with the amount of rows and columns that is being played with
             Game = new TetrisGame(Constants.ROWS, Constants.COLUMNS, seed);
 
             // Initialize the game
-
-            // Starts the loop for updating the UI
-            StartUpdateBoardTask();
-        }
-
             Game.InitializeGame();
+            
             Game.AddTimerListener(UpdateTick);
+            
+            Game.StartGame();
+            
+            Update();
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace TetrisClient {
 
         public void EndGame() {
             GameOverScreen.Visibility = Visibility.Visible;
-            RemoveKeyListener();
+            RemoveKeyListener(KeyPressed);
         }
 
         /// <summary>
@@ -93,17 +93,17 @@ namespace TetrisClient {
         /// <summary>
         /// Subscribe to the KeyDown event with the KeyPressed handler
         /// </summary>
-        private void RegisterKeyListener() {
+        public void RegisterKeyListener(KeyEventHandler method) {
             var window = Window.GetWindow(this);
-            window.KeyDown += KeyPressed;
+            window.KeyDown += method;
         }
 
         /// <summary>
         /// Unsubscribe from the KeyDown event with the KeyPressed handler
         /// </summary>
-        private void RemoveKeyListener() {
+        public void RemoveKeyListener(KeyEventHandler method) {
             var window = Window.GetWindow(this);
-            window.KeyDown -= KeyPressed;
+            window.KeyDown -= method;
         }
     }
 }

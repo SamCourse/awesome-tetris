@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 
 namespace TetrisClient {
     public partial class MultiplayerPage {
@@ -11,7 +14,7 @@ namespace TetrisClient {
         private GamePage _p1GamePage;
         private bool p1Ready;
         private bool p2Ready;
-        
+
         public MultiplayerPage() {
             InitializeComponent();
             Setup();
@@ -37,32 +40,43 @@ namespace TetrisClient {
 
         private void StartGame(int seed) {
             _p1GamePage.Initialize(seed);
-            
+            _p1GamePage.Game.AddTimerListener((_, _) => DispatchUpdate());
+
+            DispatchUpdate();
             LobbyScreen.Visibility = Visibility.Hidden;
         }
 
         private void MountHandlers() {
+            // Mount connection handlers
             _connection.On("ReadyUp", () => {
                 p2Ready = !p2Ready;
                 Dispatcher.Invoke(() =>
                     Player2ReadyImage.Visibility = p2Ready ? Visibility.Visible : Visibility.Hidden);
             });
 
-            _connection.On<int>("Start", 
-                seed => Dispatcher.Invoke(() => StartGame(seed)));// Run from main thread because this thread does not own the element
+            _connection.On<int>("Start",
+                seed => Dispatcher.Invoke(() => { // Run from main thread because this thread does not own the element
+                    StartGame(seed);
+
+                    // Mount key listener
+                    _p1GamePage.RegisterKeyListener(KeyPressed);
+                }));
 
             // ReceiveUpdate
             _connection.On("Update", (
-                int[,] board,
-                int[,] queue,
+                string board,
+                string queue,
                 int points,
                 int lines) => {
-                GameGridTwo.UpdateBoard(board);
-                QueueGridTwo.UpdateBoard(queue);
-                PointsLabelTwo.Content = points;
-                LinesLabelTwo.Content = lines;
+                Dispatcher.Invoke(() => {
+                    GameGridTwo.UpdateBoard(JsonConvert.DeserializeObject<int[,]>(board));
+                    QueueGridTwo.UpdateBoard(JsonConvert.DeserializeObject<int[,]>(queue));
+                    PointsLabelTwo.Content = points;
+                    LinesLabelTwo.Content = lines;
+                });
             });
-            // ReceiveGameEnd
+
+            });
         }
 
         private async void ReadyUp_OnClick(object sender, RoutedEventArgs e) {
@@ -82,6 +96,33 @@ namespace TetrisClient {
             }
 
             await _connection.InvokeAsync("ReadyUp", p1Ready && p2Ready);
+        }
+
+        private async void DispatchUpdate() {
+            await _connection.InvokeAsync("UpdateBoard",
+                JsonConvert.SerializeObject(_p1GamePage.Game.Board),
+                JsonConvert.SerializeObject(_p1GamePage.Game.Queue),
+                _p1GamePage.Game.Points,
+                _p1GamePage.Game.Lines);
+        }
+
+        /// <summary>
+        /// The event handler that handles key presses. Only up-down-left-right and ASDW are handled here.
+        /// </summary>
+        private void KeyPressed(object sender, KeyEventArgs keyPress) {
+            // Handle key presses
+            switch (keyPress.Key) {
+                case Key.A:
+                case Key.Left:
+                case Key.S:
+                case Key.Down:
+                case Key.D:
+                case Key.Right:
+                case Key.W:
+                case Key.Up:
+                    DispatchUpdate();
+                    break;
+            }
         }
     }
 }

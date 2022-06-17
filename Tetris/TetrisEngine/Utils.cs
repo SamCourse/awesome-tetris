@@ -4,7 +4,7 @@ using System.Linq;
 namespace TetrisEngine {
     public static class Utils {
         /// <summary>
-        /// A static class used to convert a Queue of matrices to a int[,].
+        /// A static method used to convert a Queue of matrices to a int[,].
         /// </summary>
         /// <param name="queue">The queue of matrices.</param>
         /// <returns>The queue as an int[,] object.</returns>

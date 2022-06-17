@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace TetrisServer.Hubs {
     public class TetrisHub : Hub {
-        public async Task UpdateBoard(int[,] board,
-            int[,] queue,
+        public async Task UpdateBoard(string board,
+            string queue,
             int points,
             int lines) {
             await Clients.Others.SendAsync("Update", board, queue, points, lines);

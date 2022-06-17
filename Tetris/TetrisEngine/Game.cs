@@ -197,12 +197,11 @@ namespace TetrisEngine {
                 (int x, int y) = coordinate;
                 _board.EmptyCell(x, y);
             });
-            
-            Place(tetrominoRotated);
-            
+
             _currentTetromino = tetrominoRotated;
             
             PlaceGhostPiece();
+            Place(tetrominoRotated);
 
             return true;
         }

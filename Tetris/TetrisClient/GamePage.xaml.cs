@@ -7,8 +7,7 @@ using TetrisEngine;
 
 namespace TetrisClient {
     public partial class GamePage {
-        private DispatcherTimer _timer;
-        private TetrisGame _game;
+        public TetrisGame Game;
 
         public GamePage() {
             InitializeComponent();
@@ -19,23 +18,16 @@ namespace TetrisClient {
             RegisterKeyListener();
 
             // Create new Game object with the amount of rows and columns that is being played with
-            _game = new TetrisGame(Constants.ROWS, Constants.COLUMNS, seed);
+            Game = new TetrisGame(Constants.ROWS, Constants.COLUMNS, seed);
 
             // Initialize the game
-            _game.InitializeGame();
 
             // Starts the loop for updating the UI
             StartUpdateBoardTask();
         }
 
-        /// <summary>
-        /// Starts the updating task.
-        /// </summary>
-        private void StartUpdateBoardTask() {
-            _timer = new DispatcherTimer();
-            _timer.Tick += UpdateTick;
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, 10); // Update every 10 ms.
-            _timer.Start();
+            Game.InitializeGame();
+            Game.AddTimerListener(UpdateTick);
         }
 
         /// <summary>
@@ -44,15 +36,14 @@ namespace TetrisClient {
         private void UpdateTick(object sender, EventArgs e) {
             if (_game.GameState == GameState.OVER)
                 EndGame();
-            
-            GameGrid.UpdateBoard(_game.Board);
-            QueueGrid.UpdateBoard(_game.Queue);
+
+            GameGrid.UpdateBoard(Game.Board);
+            QueueGrid.UpdateBoard(Game.Queue);
             UpdateScore();
         }
 
         public void EndGame() {
             GameOverScreen.Visibility = Visibility.Visible;
-            _timer.Stop();
             RemoveKeyListener();
         }
 

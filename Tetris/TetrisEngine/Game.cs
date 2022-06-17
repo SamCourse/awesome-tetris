@@ -40,7 +40,6 @@ namespace TetrisEngine {
 
         /// <summary>
         /// Initializes the game. Sets the gamestate and fills the tetromino queue.
-        /// Spawns the first tetromino, and sets up the automatic falling timer.
         /// </summary>
         public void InitializeGame() {
             // Initialize the scoring system with the Normal-mode scoring system.
@@ -53,9 +52,24 @@ namespace TetrisEngine {
             for (int i = 0; i < 3; i++) {
                 QueueNewTetromino();
             }
-
-            AttemptSpawnNextTetromino();
+            
             SetupFallTimer();
+        }
+
+        public void AddTimerListener(ElapsedEventHandler method) {
+            if (_timer == null)
+                return;
+            
+            _timer.Elapsed += method;
+        }
+
+
+        /// <summary>
+        /// Spawns the first tetromino, and sets up the automatic falling timer.
+        /// </summary>
+        public void StartGame() {
+            AttemptSpawnNextTetromino();
+            _timer.Start();
         }
 
         /// <summary>
@@ -65,12 +79,12 @@ namespace TetrisEngine {
             _timer = new Timer(1000);
 
             // Register the event for when a piece falls
-            _timer.Elapsed += (_, _) => {
-                AttemptMove(Direction.DOWN);
-                _scoring.Fall();
-            };
+            AddTimerListener(TimerTick);
+        }
 
-            _timer.Start();
+        private void TimerTick(object sender, EventArgs e) {
+            AttemptMove(Direction.DOWN);
+            _scoring.Fall();
         }
 
         private void Move(int xOffset, int yOffset) {

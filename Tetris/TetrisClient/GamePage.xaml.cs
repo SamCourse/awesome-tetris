@@ -20,7 +20,7 @@ namespace TetrisClient {
 
             // Create new Game object with the amount of rows and columns that is being played with
             _game = new TetrisGame(Constants.ROWS, Constants.COLUMNS, seed);
-    
+
             // Initialize the game
             _game.InitializeGame();
 
@@ -54,7 +54,7 @@ namespace TetrisClient {
             PointsLabel.Content = _game.Points;
             LinesLabel.Content = _game.Lines;
         }
-        
+
         /// <summary>
         /// The event handler that handles key presses. Only up-down-left-right and ASDW are handled here.
         /// </summary>
@@ -77,7 +77,8 @@ namespace TetrisClient {
                     break;
                 case Key.W:
                 case Key.Up:
-                    _game.Rotate();
+                    if (!_game.Rotate(Direction.RIGHT)) 
+                        _game.Rotate(Direction.LEFT);
                     break;
             }
 

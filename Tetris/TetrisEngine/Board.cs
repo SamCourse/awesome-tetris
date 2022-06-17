@@ -56,6 +56,14 @@ namespace TetrisEngine {
             return _board[y, x] != 0;
         }
 
+        internal bool IsOutOfBounds(int x, int y) {
+            int boardHeight = _board.GetLength(0);
+            int boardWidth = _board.GetLength(1);
+
+            return x < 0 || x >= boardWidth ||
+                   y < 0 || y >= boardHeight;
+        }
+
         /// <summary>
         /// Checks the board for rows that are full.
         /// </summary>
@@ -78,7 +86,19 @@ namespace TetrisEngine {
             for (int y = deletedRow; y > 0; y--) // Start at deleted row, move all the way up
             for (int x = 0; x < _board.GetLength(1); x++) // Iterate over the columns on this row
                 _board[y, x] = _board[y - 1, x]; // Copy the row above
-            
+        }
+
+        [Pure]
+        internal bool CanPlace(Tetromino newTetromino, Tetromino oldTetromino = null) {
+            List<(int, int)> coordinates = newTetromino.Coordinates;
+
+            foreach ((int x, int y) in coordinates) {
+                if (IsOutOfBounds(x, y) 
+                    || CellIsSet(x, y) && (!oldTetromino?.IsOnCoordinates(x, y) ?? true))
+                    return false;
+            }
+
+            return true;
         }
     }
 }

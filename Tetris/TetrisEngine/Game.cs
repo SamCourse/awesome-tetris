@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Timers;
+using System.Xml.XPath;
 
 namespace TetrisEngine {
-    internal enum Direction {
+    public enum Direction {
         LEFT,
         DOWN,
         RIGHT
     }
-    
+
     internal enum GameState {
         CREATED,
         PLAYING,
@@ -26,12 +28,11 @@ namespace TetrisEngine {
         private Scoring _scoring;
         private GameState _gameState;
         private Random _random;
-        
+
         public int[,] Board => _board._board;
         public int Points => _scoring.Points;
         public int Lines => _scoring.Lines;
         public int[,] Queue => Utils.QueueToIntArr(_queue);
-        
 
         public TetrisGame(int rows, int columns, int seed) {
             _rows = rows;
@@ -49,7 +50,7 @@ namespace TetrisEngine {
         public void InitializeGame() {
             // Initialize the scoring system with the Normal-mode scoring system.
             _scoring = Scoring.NormalGame();
-            
+
             // Set the gamestate to playing.
             _gameState = GameState.PLAYING;
 
@@ -70,101 +71,26 @@ namespace TetrisEngine {
 
             // Register the event for when a piece falls
             _timer.Elapsed += (_, _) => {
-                Move(Direction.DOWN);
+                AttemptMove(Direction.DOWN);
                 _scoring.Fall();
             };
 
             _timer.Start();
         }
 
-        /// <summary>
-        /// Tries to make the move with the current tetromino in the given direction.
-        /// </summary>
-        /// <param name="direction">The direction of where the tetromino should move.</param>
-        /// <returns> True if the move was successful, false if unsuccessful</returns>
-        private bool AttemptMove(Direction direction) {
-            int[,] matrixValue = _currentTetromino.matrix.Value;
+        private void Move(int xOffset, int yOffset) {
+            _currentTetromino.Coordinates.ForEach(coordinate => {
+                (int x, int y) = coordinate;
+                _board.EmptyCell(x, y);
+            });
 
-            // Define two queues of actions that may or may not be executed.
-            // All the delete actions need to be performed first, then the update actions afterwards.
-            // This is to prevent newly placed coordinates being overwritten by delete actions of older coordinates that are performed later.
-            List<Action> deleteActionQueue = new List<Action>();
-            List<Action> updateActionQueue = new List<Action>();
+            _currentTetromino.xPos += xOffset;
+            _currentTetromino.yPos += yOffset;
 
-            int matrixHeight = matrixValue.GetLength(0);
-            int matrixWidth = matrixValue.GetLength(1);
-
-            for (int y = 0; y < matrixHeight; y++)
-            for (int x = 0; x < matrixWidth; x++) {
-                // Get the type of the current position (and the entire tetromino if this is not 0)
-                int tetrominoType = matrixValue[y, x];
-
-                // If there is a 0 at the current coordinates, skip this iteration.
-                if (tetrominoType == 0)
-                    continue;
-
-                // Get the current coordinates of the single point in the matrix
-                int coordCurrX = _currentTetromino.xPos + x;
-                int coordCurrY = _currentTetromino.yPos - (matrixHeight - 1) + y;
-
-                // Define copies of current coordinates to be used for new coordinates.
-                int coordNewX = coordCurrX;
-                int coordNewY = coordCurrY;
-
-                // Update the coordinates based on the desired direction
-                switch (direction) {
-                    case Direction.LEFT:
-                        coordNewX--;
-                        break;
-                    case Direction.DOWN:
-                        coordNewY++;
-                        break;
-                    case Direction.RIGHT:
-                        coordNewX++;
-                        break;
-                }
-
-                if (coordNewX >= _columns || coordNewX < 0) { // If out of bounds on the side, do nothing
-                    return true;
-                }
-
-                if (coordNewY >= _rows) { // If at bottom, return false to finish this piece
-                    return false;
-                }
-
-                // If the cell at one of the new positions is already set and
-                // it is not the same tetromino's old cells, this action is not possible
-                if (_board.CellIsSet(coordNewX, coordNewY) &&
-                    !_currentTetromino.IsOnCoordinates(coordNewX, coordNewY)) {
-                    return direction != Direction.DOWN; // If the move is not DOWN but LEFT or RIGHT,
-                    // don't process move but keep playing with same piece
-                }
-
-                // Add the two actions to their respective queues, to be performed if none of the given cells are set.
-                deleteActionQueue.Add(() => _board.EmptyCell(coordCurrX, coordCurrY));
-                updateActionQueue.Add(() => _board.SetCell(coordNewX, coordNewY, tetrominoType));
-            }
-
-
-            switch (direction) {
-                case Direction.DOWN:
-                    _currentTetromino.yPos++;
-                    break;
-                case Direction.LEFT:
-                    _currentTetromino.xPos--;
-                    break;
-                case Direction.RIGHT:
-                    _currentTetromino.xPos++;
-                    break;
-            }
-
-            foreach (Action deleteCell in deleteActionQueue)
-                deleteCell();
-
-            foreach (Action updateCellAndTetromino in updateActionQueue)
-                updateCellAndTetromino();
-
-            return true;
+            _currentTetromino.Coordinates.ForEach(coordinate => {
+                (int x, int y) = coordinate;
+                _board.SetCell(x, y, _currentTetromino.Type);
+            });
         }
 
         /// <summary>
@@ -173,15 +99,27 @@ namespace TetrisEngine {
         /// If the spawn was unsuccesful, ends the game.
         /// </summary>
         /// <param name="direction">The direction the move is in.</param>
-        private void Move(Direction direction) {
-            bool moveSuccesful = AttemptMove(direction);
+        private void AttemptMove(Direction direction) {
+            (int offsetX, int offsetY) = direction switch {
+                Direction.LEFT => (-1, 0),
+                Direction.RIGHT => (1, 0),
+                Direction.DOWN => (0, 1)
+            };
 
-            if (!moveSuccesful) {
+            Tetromino tempTetromino = new Tetromino(_currentTetromino.matrix,
+                _currentTetromino.xPos + offsetX,
+                _currentTetromino.yPos + offsetY);
+
+            bool canMove = _board.CanPlace(tempTetromino, _currentTetromino);
+
+            if (canMove)
+                Move(offsetX, offsetY);
+            else if (direction == Direction.DOWN) {
                 _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
 
                 CheckForFullRows();
                 if (!AttemptSpawnNextTetromino())
-                    // GameOver
+                    // TODO: GameOver
                     _gameState = GameState.OVER;
             }
         }
@@ -190,14 +128,14 @@ namespace TetrisEngine {
         /// Moves the current tetromino to the left
         /// </summary>
         public void MoveLeft() {
-            Move(Direction.LEFT);
+            AttemptMove(Direction.LEFT);
         }
 
         /// <summary>
         /// Moves the current tetromino to the right
         /// </summary>
         public void MoveRight() {
-            Move(Direction.RIGHT);
+            AttemptMove(Direction.RIGHT);
         }
 
         /// <summary>
@@ -205,7 +143,7 @@ namespace TetrisEngine {
         /// This should only be called when user input is given, because this method resets the automatic drop timer.
         /// </summary>
         public void MoveDown() {
-            Move(Direction.DOWN);
+            AttemptMove(Direction.DOWN);
 
             _scoring.SoftDrop();
 
@@ -215,13 +153,18 @@ namespace TetrisEngine {
             _timer.Start();
         }
 
-        /// <summary>
-        /// Attempt to rotate. Tries 90 degree rotation first.
-        /// If that doesn't work, tries to rotate 90 degrees counter clockwise.
-        /// </summary>
-        public void Rotate() {
-            if (!AttemptRotate(Direction.RIGHT))
-                AttemptRotate(Direction.LEFT);
+        private void PerformRotate(Tetromino tetrominoRotated) {
+            _currentTetromino.Coordinates.ForEach(coordinate => {
+                (int x, int y) = coordinate;
+                _board.EmptyCell(x, y);
+            });
+
+            tetrominoRotated.Coordinates.ForEach(coordinate => {
+                (int x, int y) = coordinate;
+                _board.SetCell(x, y, tetrominoRotated.Type);
+            });
+
+            _currentTetromino = tetrominoRotated;
         }
 
         /// <summary>
@@ -232,65 +175,24 @@ namespace TetrisEngine {
         /// <exception cref="ArgumentException">
         /// Thrown if anything other than LEFT or RIGHT was passed as argument
         /// </exception>
-        private bool AttemptRotate(Direction direction) {
-            Tetromino tetrominoPreRotate = _currentTetromino;
-
+        public bool Rotate(Direction direction) {
             Matrix rotatedMatrix = direction switch {
                 Direction.RIGHT => _currentTetromino.matrix.Rotate90(),
                 Direction.LEFT => _currentTetromino.matrix.Rotate90CounterClockwise(),
                 _ => throw new ArgumentException("AttemptRotate() must be called with either \"LEFT\" or \"RIGHT\"")
             };
 
-            Tetromino postRotate = new Tetromino(rotatedMatrix, _currentTetromino.xPos, _currentTetromino.yPos);
+            Tetromino tetrominoRotated = new Tetromino(rotatedMatrix, _currentTetromino.xPos, _currentTetromino.yPos);
 
-            // Like the Move() method, the actions in these queues are only executed after all the checks pass.
-            List<Action> deleteActionQueue = new List<Action>();
-            List<Action> updateActionQueue = new List<Action>();
-
-            for (int y = 0; y < rotatedMatrix.Value.GetLength(0); y++)
-            for (int x = 0; x < rotatedMatrix.Value.GetLength(1); x++) {
-                // Get the tetromino type of the current position
-                int tetrominoType = rotatedMatrix.Value[y, x];
-
-                // Get the coordinates of the current single point in the matrix
-                int rotatedCoordX = postRotate.xPos + x;
-                int rotatedCoordY = postRotate.yPos - (rotatedMatrix.Value.GetLength(0) - 1) + y;
-
-                // If out of bounds on any side, don't rotate
-                if (rotatedCoordX > _columns - 1 || rotatedCoordX < 0 ||
-                    rotatedCoordY > _rows - 1 || rotatedCoordY < 0) {
-                    return false;
-                }
-
-                // If the cell at one of the new positions is already set and
-                // it is not the cells of the pre-rotation matrix, this action is not possible
-                if (tetrominoType != 0 &&
-                    _board.CellIsSet(rotatedCoordX, rotatedCoordY) &&
-                    !tetrominoPreRotate.IsOnCoordinates(rotatedCoordX, rotatedCoordY)) {
-                    return false;
-                }
-
-                // Empty the cells from the old position and rotation
-                if (tetrominoPreRotate.IsOnCoordinates(rotatedCoordX, rotatedCoordY))
-                    deleteActionQueue.Add(() => _board.EmptyCell(rotatedCoordX, rotatedCoordY));
-                
-                // Set the cell with the current type if the type isn't 0
-                if (tetrominoType != 0)
-                    updateActionQueue.Add(() => _board.SetCell(rotatedCoordX, rotatedCoordY, tetrominoType));
+            if (_board.CanPlace(tetrominoRotated, _currentTetromino)) {
+                PerformRotate(tetrominoRotated);
+                return true;
             }
 
-            _currentTetromino = postRotate;
-
-            foreach (Action deleteCell in deleteActionQueue)
-                deleteCell();
-
-            foreach (Action updateCellAndTetromino in updateActionQueue)
-                updateCellAndTetromino();
-
-            return true;
+            return false;
         }
 
-       
+
         /// <summary>
         /// Attempts to spawn the next tetromino.
         /// </summary>
@@ -311,40 +213,12 @@ namespace TetrisEngine {
                 _columns / 2 - 1,
                 startingY);
 
-            // Save the two dimensions in variables
-            int matrixHeight = matrix.Value.GetLength(0);
-            int matrixWidth = matrix.Value.GetLength(1);
-
-            // Define a list of actions that need to be executed if all the coordinates are valid.
-            List<Action> addActionQueue = new List<Action>();
-
-            for (int y = 0; y < matrixHeight; y++)
-            for (int x = 0; x < matrixWidth; x++) {
-                // Get the type of the current position
-                int tetrominoType = matrix.Value[y, x];
-
-                // If there is a 0 at the current coordinates, skip this iteration.
-                if (tetrominoType == 0)
-                    continue;
-
-                // Get the coordinates of the current single point in the matrix
-                int coordX = _currentTetromino.xPos + x;
-                int coordY = _currentTetromino.yPos - (matrixHeight - 1) + y;
-
-                // If the cell at one of the new positions is already set,
-                // no new piece can spawn and the game is over.
-                if (_board.CellIsSet(coordX, coordY)) {
-                    return false; // Don't process move and end game.
-                }
-
-                // Add the two actions to their respective queues, to be performed if none of the given cells are set.
-                addActionQueue.Add(() => _board.SetCell(coordX, coordY, tetrominoType));
+            if (_board.CanPlace(_currentTetromino)) {
+                Move(0, 0);
+                return true;
             }
 
-            foreach (Action addCell in addActionQueue)
-                addCell();
-
-            return true;
+            return false;
         }
 
         /// <summary>

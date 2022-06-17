@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace TetrisEngine {
     public class Tetromino {
         public Matrix matrix { get; }
-        public int xPos { get; set; }
-        public int yPos { get; set; }
-        
+        public int xPos;
+        public int yPos;
+
+        public List<(int, int)> Coordinates => GetCoordinates();
+        public int Type => GetTetrominoType();
+
         /// <param name="matrix">The matrix of the tetromino.</param>
         /// <param name="yPos">The highest Y coordinate of the matrix' position.</param>
         /// <param name="xPos">The lowest X coordinate of the matrix' position.</param>
@@ -16,25 +21,38 @@ namespace TetrisEngine {
             this.yPos = yPos;
         }
 
+        /// <summary>
+        /// Used to define whether the tetromino is positioned on the given coordinates
+        /// </summary>
+        /// <returns>Whether this tetromino has a non-0 cell on the given coordinates</returns>
+        [Pure]
         public bool IsOnCoordinates(int xCoord, int yCoord) {
+            return GetCoordinates().Contains((xCoord, yCoord));
+        }
+
+        /// <summary>
+        /// Gets a list of tuples that correspond to all the coordinates of this matrix.
+        /// </summary>
+        /// <returns>A list of this matrix' coordinates in the form of [(x, y), (x, y)]</returns>
+        [Pure]
+        private List<(int, int)> GetCoordinates() {
+            List<(int, int)> coordinates = new List<(int, int)>();
+
             int matrixHeight = matrix.Value.GetLength(0);
-            int matrixWidth = matrix.Value.GetLength(1);
 
-            for (int y = 0; y < matrixHeight; y++) {
-                for (int x = 0; x < matrixWidth; x++) {
-                    int currentCellXPos = xPos + x;
-                    int currentCellYPos = yPos - (matrixHeight - 1 - y);
-                    int tetroType = matrix.Value[y, x];
+            for (int y = 0; y < matrixHeight; y++)
+            for (int x = 0; x < matrix.Value.GetLength(1); x++)
+                if (matrix.Value[y, x] != 0)
+                    coordinates.Add((xPos + x, yPos - (matrixHeight - 1 - y)));
 
-                    if (xCoord == currentCellXPos &&
-                        yCoord == currentCellYPos &&
-                        tetroType != 0) {
-                        return true;
-                    }
-                }
-            }
+            return coordinates;
+        }
 
-            return false;
+        [Pure]
+        private int GetTetrominoType() {
+            return matrix.Value.Cast<int>()
+                .ToList()
+                .FirstOrDefault(i => i != 0);
         }
     }
 

@@ -28,7 +28,7 @@ namespace TetrisClient {
         /// <summary>
         /// Updates the grid with any given changes.
         /// </summary>
-        public virtual void UpdateBoard(int[,] newGrid) {
+        public void UpdateBoard(int[,] newGrid) {
             // Clear the grid
             ClearGrid();
 

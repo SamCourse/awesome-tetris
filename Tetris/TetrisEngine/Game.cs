@@ -128,7 +128,7 @@ namespace TetrisEngine {
 
                 CheckForFullRows();
                 if (!AttemptSpawnNextTetromino())
-                    GameState = GameState.OVER;
+                    EndGame();
             }
         }
 
@@ -239,6 +239,11 @@ namespace TetrisEngine {
         /// </summary>
         private void QueueNewTetromino() {
             _queue.Enqueue(Shapes.RandomShape(_random));
+        }
+
+        private void EndGame() {
+            GameState = GameState.OVER;
+            _timer.Stop();
         }
     }
 }

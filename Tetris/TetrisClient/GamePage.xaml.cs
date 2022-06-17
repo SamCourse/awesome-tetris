@@ -34,7 +34,11 @@ namespace TetrisClient {
         /// The method that handles the update task. Updates the board, queue and score.
         /// </summary>
         private void UpdateTick(object sender, EventArgs e) {
-            if (_game.GameState == GameState.OVER)
+            Dispatcher.Invoke(Update);
+        }
+
+        private void Update() {
+            if (Game.GameState == GameState.OVER)
                 EndGame();
 
             GameGrid.UpdateBoard(Game.Board);
@@ -51,8 +55,8 @@ namespace TetrisClient {
         /// Updates the score with any changes from the game engine.
         /// </summary>
         private void UpdateScore() {
-            PointsLabel.Content = _game.Points;
-            LinesLabel.Content = _game.Lines;
+            PointsLabel.Content = Game.Points;
+            LinesLabel.Content = Game.Lines;
         }
 
         /// <summary>
@@ -65,27 +69,25 @@ namespace TetrisClient {
                     return;
                 case Key.A:
                 case Key.Left:
-                    _game.MoveLeft();
+                    Game.MoveLeft();
                     break;
                 case Key.S:
                 case Key.Down:
-                    _game.MoveDown();
+                    Game.MoveDown();
                     break;
                 case Key.D:
                 case Key.Right:
-                    _game.MoveRight();
+                    Game.MoveRight();
                     break;
                 case Key.W:
                 case Key.Up:
-                    if (!_game.Rotate(Direction.RIGHT)) 
-                        _game.Rotate(Direction.LEFT);
+                    if (!Game.Rotate(Direction.RIGHT))
+                        Game.Rotate(Direction.LEFT);
                     break;
             }
 
-            keyPress.Handled = true;
-
             // Update the game board after handling an action
-            GameGrid.UpdateBoard(_game.Board);
+            Update();
         }
 
         /// <summary>

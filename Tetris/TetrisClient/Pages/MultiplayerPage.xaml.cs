@@ -56,7 +56,7 @@ namespace TetrisClient {
 
             // Send an update to the other player with the new changes after starting the game
             DispatchUpdate();
-            
+
             // Hide the lobby screen
             LobbyScreen.Visibility = Visibility.Hidden;
         }
@@ -68,7 +68,7 @@ namespace TetrisClient {
             // Handler for when the other player presses the ready-up button.
             _connection.On("ReadyUp", () => {
                 p2Ready = !p2Ready;
-                
+
                 Dispatcher.Invoke(() =>
                     Player2ReadyImage.Visibility = p2Ready ? Visibility.Visible : Visibility.Hidden);
             });

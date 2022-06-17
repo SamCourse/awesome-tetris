@@ -1,4 +1,8 @@
 namespace TetrisEngine {
+    /// <summary>
+    /// A scoring class used to track the score of the player during a game. Multiple variations can be made.
+    /// For this subject, only a default gamemode was created.
+    /// </summary>
     public class Scoring {
         public int Points { get; private set; }
         public int Lines { get; private set; }

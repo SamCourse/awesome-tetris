@@ -49,7 +49,7 @@ namespace TetrisClient {
                 Width = _size, // Width of a cell in the grid
                 Height = _size, // Height of a cell in the grid
                 Stroke = type == -1 ? Brushes.DarkSlateGray : Brushes.Transparent, // The border. Transparent if
-                                                                                   // it is not a ghost piece.
+                // it is not a ghost piece.
                 StrokeThickness = type == -1 ? 0.5 : 2, // Thickness of the border. Thicker if not a ghost piece.
                 Fill = Constants.ColorMap[type] // Background color
             };
@@ -73,7 +73,7 @@ namespace TetrisClient {
             foreach (UIElement rectangle in rectangles)
                 TetrisGrid.Children.Remove(rectangle);
         }
-        
+
         /// <summary>
         /// Draw the grid with borders with the given row and column count in the constructor, and the size of the cells.
         /// </summary>
@@ -94,7 +94,7 @@ namespace TetrisClient {
                     border = new Border {
                         BorderThickness = new Thickness(0, 0, 0, 1)
                     };
-                
+
                 else if (i % 2 == 0) // Every other cell should have a border on both top and bottom
                     border = new Border {
                         BorderThickness = new Thickness(0, 1, 0, 1)
@@ -107,7 +107,7 @@ namespace TetrisClient {
 
                 // Add the border to the grid children
                 TetrisGrid.Children.Add(border);
-                
+
                 // Add the border to the given row
                 SetRow(border, i);
                 // Add the border to the entire column
@@ -116,11 +116,10 @@ namespace TetrisClient {
 
             // Exact same as previous loop but for the columns instead of the rows.
             for (int i = 0; i < _columns; i++) {
-                
                 TetrisGrid.ColumnDefinitions.Add(new ColumnDefinition {
                     Width = new GridLength(_size)
                 });
-                
+
                 if (!ShowBorders)
                     continue;
 

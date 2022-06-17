@@ -17,7 +17,7 @@ namespace TetrisClient {
             // Create a new GamePage
             var gamePage = new GamePage();
             Content = gamePage;
-            
+
             // Initializes and starts the game.
             gamePage.Initialize();
         }

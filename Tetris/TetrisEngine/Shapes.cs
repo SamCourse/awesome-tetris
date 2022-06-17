@@ -21,9 +21,6 @@ namespace TetrisEngine {
             this.yPos = yPos;
         }
 
-        public Tetromino(Tetromino toClone) : this(toClone.matrix, toClone.xPos, toClone.yPos) {
-        }
-
         /// <summary>
         /// Used to define whether the tetromino is positioned on the given coordinates
         /// </summary>
@@ -51,6 +48,10 @@ namespace TetrisEngine {
             return coordinates;
         }
 
+        /// <summary>
+        /// Gets the type of the current tetromino
+        /// </summary>
+        /// <returns>The type of this tetromino</returns>
         [Pure]
         private int GetTetrominoType() {
             return matrix.Value.Cast<int>()
@@ -58,6 +59,11 @@ namespace TetrisEngine {
                 .FirstOrDefault(i => i != 0);
         }
 
+
+        /// <summary>
+        /// Gets this tetromino as ghost piece version.
+        /// </summary>
+        /// <returns>This tetromino as a ghost piece.</returns>
         [Pure]
         public Tetromino AsGhost() {
             int matrixHeight = matrix.Value.GetLength(0);

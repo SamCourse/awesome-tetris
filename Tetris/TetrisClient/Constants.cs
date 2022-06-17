@@ -7,8 +7,9 @@ namespace TetrisClient {
         /// The amount of Rows and Columns used for the game
         /// </summary>
         public const int ROWS = 16;
+
         public const int COLUMNS = 10;
-        
+
         /// <summary>
         /// A Dictionary of tetris shape number as key, with the corresponding color as the value.
         /// </summary>

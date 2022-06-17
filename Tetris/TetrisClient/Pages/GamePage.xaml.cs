@@ -84,6 +84,9 @@ namespace TetrisClient {
                     if (!Game.Rotate(Direction.RIGHT))
                         Game.Rotate(Direction.LEFT);
                     break;
+                case Key.Space:
+                    Game.MoveDownHard();
+                    break;
             }
 
             // Update the game board after handling an action

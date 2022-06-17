@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Timers;
 
 namespace TetrisEngine {
@@ -115,7 +116,7 @@ namespace TetrisEngine {
         /// If the spawn was unsuccesful, ends the game.
         /// </summary>
         /// <param name="direction">The direction the move is in.</param>
-        private void AttemptMove(Direction direction) {
+        private bool AttemptMove(Direction direction) {
             (int offsetX, int offsetY) = direction switch {
                 Direction.LEFT => (-1, 0),
                 Direction.RIGHT => (1, 0),
@@ -128,15 +129,19 @@ namespace TetrisEngine {
 
             bool canMove = _board.CanPlace(tempTetromino, _currentTetromino);
 
-            if (canMove)
+            if (canMove) {
                 Move(offsetX, offsetY);
-            else if (direction == Direction.DOWN) {
+                return true;
+            }
+            if (direction == Direction.DOWN) {
                 _scoring.Land(_currentTetromino.matrix.GetNonZeroCount());
 
                 CheckForFullRows();
                 if (!AttemptSpawnNext())
                     EndGame();
             }
+
+            return false;
         }
 
         /// <summary>
@@ -157,15 +162,23 @@ namespace TetrisEngine {
         /// Moves the current tetromino down.
         /// This should only be called when user input is given, because this method resets the automatic drop timer.
         /// </summary>
-        public void MoveDown() {
-            AttemptMove(Direction.DOWN);
+        public bool MoveDown() {
+            if (AttemptMove(Direction.DOWN)) {
+                _scoring.SoftDrop();
 
-            _scoring.SoftDrop();
+                // A hacky way to reset the current interval on the timer.
+                // There doesn't seem to be another way of achieving this.
+                _timer.Stop();
+                _timer.Start();
 
-            // A hacky way to reset the current interval on the timer.
-            // There doesn't seem to be another way of achieving this.
-            _timer.Stop();
-            _timer.Start();
+                return true;
+            }
+
+            return false;
+        }
+
+        public void MoveDownHard() {
+            while (MoveDown()) { }
         }
 
         public bool Rotate(Direction direction) {

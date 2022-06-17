@@ -195,10 +195,7 @@ namespace TetrisEngine {
         /// <returns>Whether the spawn is possible</returns>
         private bool AttemptSpawnNextTetromino() {
             // Get and removes the next tetromino from the queue
-            Matrix matrix = _queue.Dequeue();
-
-            // Add a new tetromino to the queue
-            QueueNewTetromino();
+            Matrix matrix = _queue.Peek();
 
             // Define the starting Y position of the next tetromino
             int startingY = matrix.Value.GetLength(0) - matrix.GetFirstNonEmptyRow() - 1;
@@ -209,7 +206,14 @@ namespace TetrisEngine {
                 0,
                 startingY);
 
-            return _board.SpawnNew(_currentTetromino);
+            if (_board.SpawnNew(_currentTetromino)) {
+                // Add a new tetromino to the queue
+                QueueNewTetromino();
+                _queue.Dequeue();
+                
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

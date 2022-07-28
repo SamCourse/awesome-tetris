@@ -20,8 +20,7 @@ When the application is started, the player is presented with 3 options. Single 
    Another player now needs to do the same and then both players need to ready up to start the game.  
    On the left side is the screen that the player plays on, on the right side is the screen of the other player.
    Both players play their own game of tetris, but each are presented with the same queue of tetrominos.  
-   The players play until their game ends. The other player keeps playing until their game ends.
-   The player that ends their game first will stop transmitting data, but keep receiving from the player that is still playing. This way the player can keep watching the other player.
+   The players play until their game ends. The player that ends their game first will stop transmitting data, but keep receiving from the player that is still playing. This way the player can keep watching the other player even though their game has already ended.
 
 
 ### How to play
@@ -50,7 +49,7 @@ Whenever the player moves the tetromino down manually, every position moved awar
 reward any points.  
 When the tetromino lands in it's final position, the player is awarded the amount of blocks in the tetromino, times
 two.  
-Once a full line is full on the board, that line will be deleted and the player will be awarded points.  
+Once a full line is filled with blocks on the board, that line will be deleted and the player will be awarded points.  
 If one line is deleted, 50 points are awarded. For more than one line deleted at once, the player is awarded (
 linesDeleted * 2 - 1) * 50. This means the more lines deleted at a time, the more points awarded.  
 For every 5 lines removed, the timer interval for the falling tetromino is decreased. This is done with the following
